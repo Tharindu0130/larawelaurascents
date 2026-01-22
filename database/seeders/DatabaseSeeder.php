@@ -20,12 +20,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+<<<<<<< HEAD
         // Create 1 regular user to own seeded products
         $owner = User::factory()->create([
             'name' => 'Seed Owner',
             'email' => 'owner@aurascent.local',
             'password' => Hash::make('password'),
             'user_type' => 'customer',
+=======
+        // Create 1 admin user
+        $admin = User::factory()->create([
+            'name' => 'Admin User',
+            'email' => 'admin@aurascents.com',
+            'password' => Hash::make('password'),
+            'user_type' => 'admin',
+>>>>>>> 48820d73d693238422ed1311b0652368a9c335d5
         ]);
 
         // Create 5 categories
@@ -36,7 +45,11 @@ class DatabaseSeeder extends Seeder
 
         // Create 10 perfumes (products)
         $products = Product::factory(10)->create([
+<<<<<<< HEAD
             'user_id' => $owner->id,
+=======
+            'user_id' => $admin->id,
+>>>>>>> 48820d73d693238422ed1311b0652368a9c335d5
         ]);
 
         // Assign random categories to products
