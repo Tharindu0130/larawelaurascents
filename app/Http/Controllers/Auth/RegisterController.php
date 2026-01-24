@@ -9,12 +9,12 @@ use Illuminate\Support\Facades\Hash;
 
 class RegisterController extends Controller
 {
-    public function showRegistrationForm()
+    public function show()
     {
         return view('auth.register');
     }
 
-    public function register(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
@@ -26,9 +26,10 @@ class RegisterController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'customer', // SAFE default
         ]);
 
-        return redirect('/login')->with('success', 'Account created successfully. Please login.');
+        return redirect()
+            ->route('login')
+            ->with('success', 'Account created successfully. Please login.');
     }
 }

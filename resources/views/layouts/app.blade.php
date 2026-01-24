@@ -1,43 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Aura Scents</title>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{{ config('app.name', 'Laravel') }}</title>
 
-    {{-- Tailwind CDN (simple for now) --}}
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-white text-gray-800">
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-    {{-- NAVBAR --}}
-    <header class="border-b">
-        <div class="max-w-7xl mx-auto flex justify-between items-center p-4">
-            <h1 class="text-xl font-bold">Aura Scents</h1>
+        <!-- Scripts -->
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-            <nav class="space-x-6 text-sm">
-                <a href="{{ route('home') }}" class="hover:text-indigo-600">Home</a>
-                <a href="{{ route('products') }}" class="hover:text-indigo-600">Products</a>
-                <a href="{{ route('about') }}" class="hover:text-indigo-600">About</a>
-                <a href="{{ route('contact') }}" class="hover:text-indigo-600">Contact</a>
-                <a href="{{ route('cart.show') }}" class="hover:text-indigo-600">
-    Cart
-</a>
-                <a href="{{ route('login') }}" class="hover:text-indigo-600">Login</a>
-            </nav>
+        <!-- Styles -->
+        @livewireStyles
+    </head>
+    <body class="font-sans antialiased">
+        <x-banner />
+
+        <div class="min-h-screen bg-gray-100">
+            @include('layouts.customer-nav')
+
+            <!-- Page Heading -->
+            @if (isset($header))
+                <header class="bg-white shadow">
+                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                        {{ $header }}
+                    </div>
+                </header>
+            @endif
+
+            <!-- Page Content -->
+            <main>
+                {{ $slot }}
+            </main>
         </div>
-    </header>
 
-    {{-- PAGE CONTENT --}}
-    <main class="max-w-7xl mx-auto py-10 px-4">
-        @yield('content')
-    </main>
+        @stack('modals')
 
-    {{-- FOOTER --}}
-    <footer class="border-t mt-20 py-6 text-center text-sm text-gray-500">
-        © {{ date('Y') }} Aura Scents. All rights reserved.
-    </footer>
-
-</body>
+        @livewireScripts
+    </body>
 </html>
