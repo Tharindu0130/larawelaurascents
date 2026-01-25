@@ -35,7 +35,7 @@
                     </h3>
 
                     <p class="text-gray-700 font-bold mb-4">
-                        ${{ number_format($product->price, 2) }}
+                        Rs. {{ number_format($product->price, 2) }}
                     </p>
 
                     {{-- ✅ ADD TO CART FORM (NEW) --}}

@@ -30,9 +30,7 @@ class FortifyServiceProvider extends ServiceProvider
     public function boot(): void
     {
         /*
-        |--------------------------------------------------------------------------
         | Fortify Actions
-        |--------------------------------------------------------------------------
         */
         Fortify::createUsersUsing(CreateNewUser::class);
         Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
@@ -43,9 +41,7 @@ class FortifyServiceProvider extends ServiceProvider
         );
 
         /*
-        |--------------------------------------------------------------------------
         | Custom Auth Views (IMPORTANT)
-        |--------------------------------------------------------------------------
         */
         Fortify::loginView(function () {
             return view('auth.login');
@@ -56,9 +52,7 @@ class FortifyServiceProvider extends ServiceProvider
         });
 
         /*
-        |--------------------------------------------------------------------------
         | Rate Limiting
-        |--------------------------------------------------------------------------
         */
         RateLimiter::for('login', function (Request $request) {
             $throttleKey = Str::transliterate(
@@ -75,9 +69,7 @@ class FortifyServiceProvider extends ServiceProvider
         });
 
         /*
-        |--------------------------------------------------------------------------
         | Redirect After Login / Register (Laravel 12 way)
-        |--------------------------------------------------------------------------
         */
         config(['fortify.home' => '/products']);
     }

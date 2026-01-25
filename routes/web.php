@@ -81,16 +81,21 @@ Route::post('/cart/update/{productId}', [CartController::class, 'updateQuantity'
     ->name('cart.update');
 
 
-
 /*
 |--------------------------------------------------------------------------
-| Checkout
+| Checkout & Orders
 |--------------------------------------------------------------------------
 */
 
+// Checkout page (public, but should be accessed after cart)
 Route::get('/checkout', function () {
     return view('customer.checkout');
 })->name('checkout');
+
+// Place order (protected - requires authentication and customer role)
+Route::post('/checkout', [App\Http\Controllers\OrderController::class, 'placeOrder'])
+    ->middleware(['auth', 'role:customer'])
+    ->name('checkout.place');
 
 Route::middleware([
     'auth:sanctum',
@@ -103,9 +108,34 @@ Route::middleware([
         return view('admin.dashboard');
     })->middleware('role:admin')->name('admin.dashboard');
 
+    // Admin Products Management
+    Route::get('/admin/products', \App\Livewire\AdminProducts::class)
+        ->middleware('role:admin')
+        ->name('admin.products');
+
+    // Admin Customers Management
+    Route::get('/admin/customers', \App\Livewire\AdminCustomers::class)
+        ->middleware('role:admin')
+        ->name('admin.customers');
+
+    // Admin Orders Management
+    Route::get('/admin/orders', \App\Livewire\AdminOrders::class)
+        ->middleware('role:admin')
+        ->name('admin.orders');
+
+
     // Customer Dashboard
     Route::get('/dashboard', function () {
         return view('customer.dashboard');
     })->middleware('role:customer')->name('customer.dashboard');
+
+    // Customer Orders (protected - customer only)
+    Route::middleware('role:customer')->group(function () {
+        Route::get('/orders', [App\Http\Controllers\OrderController::class, 'myOrders'])
+            ->name('orders.index');
+        
+        Route::get('/orders/{order}', [App\Http\Controllers\OrderController::class, 'show'])
+            ->name('orders.show');
+    });
 
 });

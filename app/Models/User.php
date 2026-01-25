@@ -41,6 +41,16 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the orders for the user.
+     * 
+     * Assignment benefit: Demonstrates hasMany relationship for customer order history
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>

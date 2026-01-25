@@ -50,4 +50,14 @@ class Product extends Model
     {
         return $this->hasMany(Comment::class);
     }
+
+    /**
+     * Get the orders that include this product.
+     * 
+     * Assignment benefit: Complete relationship mapping for order tracking
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }

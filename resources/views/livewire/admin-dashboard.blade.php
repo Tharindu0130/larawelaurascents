@@ -1,5 +1,5 @@
-<div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+<div>
+
         
         <!-- Welcome Message -->
         <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6 mb-6">
@@ -57,23 +57,35 @@
 
         <!-- Quick Actions -->
         <h3 class="text-xl font-semibold text-gray-800 mb-4">Quick Management</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    <h4 class="font-bold text-lg mb-2">Product Management</h4>
-                    <p class="text-gray-600 mb-4">Add, edit, or remove perfumes from the catalog.</p>
-                    <button class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Go to Products</button>
-                    <!-- Note: This button will need wire:click or an 'a' tag to the route -->
+                <div class="p-6 bg-white border-b border-gray-200 h-full flex flex-col justify-between">
+                    <div>
+                        <h4 class="font-bold text-lg mb-2">Product Management</h4>
+                        <p class="text-gray-600 mb-4">Add, edit, or remove perfumes from the catalog.</p>
+                    </div>
+                    <a href="{{ route('admin.products') }}" class="inline-block bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition w-full text-center">Go to Products</a>
                 </div>
             </div>
             
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    <h4 class="font-bold text-lg mb-2">User Management</h4>
-                    <p class="text-gray-600 mb-4">View and manage registered comments and users.</p>
-                    <button class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">View Comments</button>
+                <div class="p-6 bg-white border-b border-gray-200 h-full flex flex-col justify-between">
+                    <div>
+                        <h4 class="font-bold text-lg mb-2">Customer Management</h4>
+                        <p class="text-gray-600 mb-4">View and manage registered customers and their access.</p>
+                    </div>
+                    <a href="{{ route('admin.customers') }}" class="inline-block bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition w-full text-center">Manage Customers</a>
+                </div>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 bg-white border-b border-gray-200 h-full flex flex-col justify-between">
+                    <div>
+                        <h4 class="font-bold text-lg mb-2">Order Management</h4>
+                        <p class="text-gray-600 mb-4">View orders, update status, and manage fulfillment.</p>
+                    </div>
+                    <a href="{{ route('admin.orders') }}" class="inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition w-full text-center">Manage Orders</a>
                 </div>
             </div>
         </div>
-    </div>
 </div>

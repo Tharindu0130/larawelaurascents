@@ -29,10 +29,10 @@
         </a>
 
         <div class="space-x-6 flex items-center">
-            <a href="{{ route('home') }}" class="hover:text-indigo-600">Home</a>
-            <a href="{{ route('products') }}" class="hover:text-indigo-600">Products</a>
-            <a href="{{ route('about') }}" class="hover:text-indigo-600">About</a>
-            <a href="{{ route('contact') }}" class="hover:text-indigo-600">Contact</a>
+            <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'text-indigo-600 font-semibold' : 'hover:text-indigo-600' }}">Home</a>
+            <a href="{{ route('products') }}" class="{{ request()->routeIs('products') ? 'text-indigo-600 font-semibold' : 'hover:text-indigo-600' }}">Products</a>
+            <a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'text-indigo-600 font-semibold' : 'hover:text-indigo-600' }}">About</a>
+            <a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'text-indigo-600 font-semibold' : 'hover:text-indigo-600' }}">Contact</a>
 
             {{-- CART ICON --}}
             <a href="{{ route('cart.show') }}" class="relative hover:text-indigo-600">
@@ -91,12 +91,30 @@
                         </div>
 
                         <div class="py-1">
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            {{-- Jetstream Profile Page --}}
+                            <a href="{{ route('profile.show') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                 Profile
                             </a>
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                Orders
+                            
+                            {{-- Customer Orders Page --}}
+                            <a href="{{ route('orders.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                My Orders
                             </a>
+                            
+                            {{-- Dashboard (if customer) --}}
+                            @if(Auth::user()->user_type === 'customer')
+                                <a href="{{ route('customer.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    Dashboard
+                                </a>
+                            @endif
+
+                            {{-- Admin Dashboard (if admin) --}}
+                            @if(Auth::user()->isAdmin())
+                                <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    Admin Dashboard
+                                </a>
+                            @endif
+                            
                             <form action="{{ route('logout') }}" method="POST">
                                 @csrf
                                 <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">

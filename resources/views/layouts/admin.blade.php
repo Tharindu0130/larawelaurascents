@@ -1,43 +1,46 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>{{ config('app.name', 'Laravel') }} - Admin Panel</title>
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
-    <!-- Scripts -->
+    <title>Admin Portal - Aura Scents</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
 </head>
-<body class="font-sans antialiased bg-gray-100">
-    <div class="min-h-screen bg-gray-100">
-        <!-- Navigation -->
-        <nav class="bg-white border-b border-gray-200 px-4 py-3">
+<body class="bg-gray-100 font-sans antialiased">
+    <nav class="bg-white shadow-md mb-6 relative z-10">
+        <div class="container mx-auto px-6 py-4">
             <div class="flex justify-between items-center">
-                <div class="text-xl font-bold text-gray-800">
-                    <a href="{{ route('home') }}">Aura Scents</a>
-                </div>
-                
-                <div class="flex items-center space-x-4">
-                    <span class="text-sm text-gray-600">Welcome, {{ Auth::user()?->name ?? Auth::user()?->email ?? 'Guest' }}</span>
+                <div class="flex items-center space-x-8">
+                    <a href="{{ route('admin.dashboard') }}" class="text-2xl font-bold text-gray-800 hover:text-indigo-600 transition">
+                        Aura Scents Admin
+                    </a>
                     
+                    <div class="hidden md:flex space-x-6">
+                        <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'text-indigo-600 font-semibold' : 'text-gray-600 hover:text-indigo-600' }}">Dashboard</a>
+                        <a href="{{ route('admin.products') }}" class="{{ request()->routeIs('admin.products') ? 'text-indigo-600 font-semibold' : 'text-gray-600 hover:text-indigo-600' }}">Products</a>
+                        <a href="{{ route('admin.customers') }}" class="{{ request()->routeIs('admin.customers') ? 'text-indigo-600 font-semibold' : 'text-gray-600 hover:text-indigo-600' }}">Customers</a>
+                        <a href="{{ route('admin.orders') }}" class="{{ request()->routeIs('admin.orders') ? 'text-indigo-600 font-semibold' : 'text-gray-600 hover:text-indigo-600' }}">Orders</a>
+                    </div>
+                </div>
+
+                <div class="flex items-center">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="text-sm text-red-600 hover:text-red-800">Logout</button>
+                        <button type="submit" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold py-2 px-4 rounded shadow-sm transition">
+                            Logout
+                        </button>
                     </form>
                 </div>
             </div>
-        </nav>
+        </div>
+    </nav>
 
-        <!-- Page Content -->
-        <main class="py-6">
-            @yield('content')
-        </main>
-    </div>
+    <main class="container mx-auto px-6 pb-12">
+        {{ $slot }}
+    </main>
+    
+    @livewireScripts
 </body>
 </html>

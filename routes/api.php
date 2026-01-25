@@ -8,11 +8,31 @@ use App\Http\Controllers\Api\TagController;
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\AuthController;
 
-// Public routes
-Route::post('/login', [AuthController::class, 'login']);
+// 📱 MOBILE API ROUTES (Dedicated for Flutter)
+Route::prefix('mobile')->group(function () {
+    
+    // Auth
+    Route::post('/login', [App\Http\Controllers\Api\Mobile\MobileAuthController::class, 'login']);
+    
+    // Protected Routes
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/logout', [App\Http\Controllers\Api\Mobile\MobileAuthController::class, 'logout']);
+        
+        // Products
+        Route::get('/products', [App\Http\Controllers\Api\Mobile\MobileProductController::class, 'index']);
+        Route::get('/products/search', [App\Http\Controllers\Api\Mobile\MobileProductController::class, 'search']);
+        Route::get('/products/{id}', [App\Http\Controllers\Api\Mobile\MobileProductController::class, 'show']);
+        
+        // Orders
+        Route::get('/orders', [App\Http\Controllers\Api\Mobile\MobileOrderController::class, 'index']);
+        Route::post('/orders', [App\Http\Controllers\Api\Mobile\MobileOrderController::class, 'store']);
+        Route::get('/orders/{id}', [App\Http\Controllers\Api\Mobile\MobileOrderController::class, 'show']);
+    });
+});
 
-// Protected routes with Sanctum authentication
+// Legacy/Placeholder routes (keep for backward compatibility if needed)
 Route::middleware('auth:sanctum')->group(function () {
+
     // User info
 Route::get('/user', function (Request $request) {
     return $request->user();

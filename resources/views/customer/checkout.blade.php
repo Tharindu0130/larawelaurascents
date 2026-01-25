@@ -20,57 +20,68 @@
                     
                     <div class="flex justify-between items-center border-b pb-3">
                         <span>{{ $item['name'] }} x {{ $item['quantity'] }}</span>
-                        <span>${{ number_format($itemTotal, 2) }}</span>
+                        <span>Rs. {{ number_format($itemTotal, 2) }}</span>
                     </div>
                 @endforeach
                 
                 <div class="flex justify-between items-center font-bold text-lg pt-3">
                     <span>Total:</span>
-                    <span>${{ number_format($total, 2) }}</span>
+                    <span>Rs. {{ number_format($total, 2) }}</span>
                 </div>
             </div>
             
-            <form method="POST" action="#">
+            {{-- Show validation errors --}}
+            @if ($errors->any())
+                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+                    <ul class="list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('checkout.place') }}">
                 @csrf
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
                         <label class="block text-gray-700 mb-2">First Name</label>
-                        <input type="text" name="first_name" class="w-full border rounded-lg px-4 py-2" required>
+                        <input type="text" name="first_name" value="{{ old('first_name') }}" class="w-full border rounded-lg px-4 py-2" required>
                     </div>
                     
                     <div>
                         <label class="block text-gray-700 mb-2">Last Name</label>
-                        <input type="text" name="last_name" class="w-full border rounded-lg px-4 py-2" required>
+                        <input type="text" name="last_name" value="{{ old('last_name') }}" class="w-full border rounded-lg px-4 py-2" required>
                     </div>
                     
                     <div>
                         <label class="block text-gray-700 mb-2">Email</label>
-                        <input type="email" name="email" class="w-full border rounded-lg px-4 py-2" required>
+                        <input type="email" name="email" value="{{ old('email', auth()->user()->email ?? '') }}" class="w-full border rounded-lg px-4 py-2" required>
                     </div>
                     
                     <div>
                         <label class="block text-gray-700 mb-2">Phone</label>
-                        <input type="tel" name="phone" class="w-full border rounded-lg px-4 py-2" required>
+                        <input type="tel" name="phone" value="{{ old('phone') }}" class="w-full border rounded-lg px-4 py-2" required>
                     </div>
                     
                     <div class="md:col-span-2">
                         <label class="block text-gray-700 mb-2">Address</label>
-                        <input type="text" name="address" class="w-full border rounded-lg px-4 py-2" required>
+                        <input type="text" name="address" value="{{ old('address') }}" class="w-full border rounded-lg px-4 py-2" required>
                     </div>
                     
                     <div class="md:col-span-2">
                         <label class="block text-gray-700 mb-2">City</label>
-                        <input type="text" name="city" class="w-full border rounded-lg px-4 py-2" required>
+                        <input type="text" name="city" value="{{ old('city') }}" class="w-full border rounded-lg px-4 py-2" required>
                     </div>
                     
                     <div>
                         <label class="block text-gray-700 mb-2">State</label>
-                        <input type="text" name="state" class="w-full border rounded-lg px-4 py-2" required>
+                        <input type="text" name="state" value="{{ old('state') }}" class="w-full border rounded-lg px-4 py-2" required>
                     </div>
                     
                     <div>
                         <label class="block text-gray-700 mb-2">ZIP Code</label>
-                        <input type="text" name="zip" class="w-full border rounded-lg px-4 py-2" required>
+                        <input type="text" name="zip" value="{{ old('zip') }}" class="w-full border rounded-lg px-4 py-2" required>
                     </div>
                 </div>
                 
@@ -78,9 +89,9 @@
                     <label class="block text-gray-700 mb-2">Payment Method</label>
                     <select name="payment_method" class="w-full border rounded-lg px-4 py-2" required>
                         <option value="">Select Payment Method</option>
-                        <option value="credit_card">Credit Card</option>
-                        <option value="paypal">PayPal</option>
-                        <option value="bank_transfer">Bank Transfer</option>
+                        <option value="credit_card" {{ old('payment_method') == 'credit_card' ? 'selected' : '' }}>Credit Card</option>
+                        <option value="paypal" {{ old('payment_method') == 'paypal' ? 'selected' : '' }}>PayPal</option>
+                        <option value="bank_transfer" {{ old('payment_method') == 'bank_transfer' ? 'selected' : '' }}>Bank Transfer</option>
                     </select>
                 </div>
                 

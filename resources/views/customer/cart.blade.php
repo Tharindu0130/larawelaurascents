@@ -28,10 +28,10 @@
                     <div class="flex-1">
                         <h3 class="text-lg font-semibold">{{ $item['name'] }}</h3>
                         <p class="text-gray-600">
-                            ${{ number_format($item['price'], 2) }} × {{ $item['quantity'] }}
+                            Rs. {{ number_format($item['price'], 2) }} × {{ $item['quantity'] }}
                         </p>
                         <p class="font-bold mt-1">
-                            ${{ number_format($item['price'] * $item['quantity'], 2) }}
+                            Rs. {{ number_format($item['price'] * $item['quantity'], 2) }}
                         </p>
                     </div>
 
@@ -76,7 +76,7 @@
             @endphp
 
             <p class="text-xl font-bold mb-4">
-                Total: ${{ number_format($total, 2) }}
+                Total: Rs. {{ number_format($total, 2) }}
             </p>
 
             <a
