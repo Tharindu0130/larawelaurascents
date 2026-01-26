@@ -22,5 +22,13 @@ class Category extends Model
     {
         return $this->hasMany(Product::class);
     }
+
+    /**
+     * Get the posts for the category.
+     */
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
 }
 

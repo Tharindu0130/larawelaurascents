@@ -14,7 +14,7 @@ class CommentController extends Controller
      */
     public function index()
     {
-        return CommentResource::collection(Comment::with(['user', 'product'])->get());
+        return CommentResource::collection(Comment::with(['user', 'product', 'post'])->get());
     }
 
     /**
@@ -23,29 +23,31 @@ class CommentController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'user_id' => 'required|exists:users,id',
+            'product_id' => 'nullable|exists:products,id',
+            'post_id' => 'nullable|exists:posts,id',
             'content' => 'required|string',
             'rating' => 'nullable|integer|min:1|max:5',
         ]);
+        if (empty($validated['product_id']) && empty($validated['post_id'])) {
+            abort(422, 'Either product_id or post_id is required.');
+        }
+        $validated['user_id'] = $request->user()->id;
 
         $comment = Comment::create($validated);
 
-        return new CommentResource($comment->load(['user', 'product']));
+        return (new CommentResource($comment->load(['user', 'product', 'post'])))
+            ->response()
+            ->setStatusCode(201);
     }
 
-    /**
-     * Display the specified resource.
-     */
+    /** Display the specified resource.*/
     public function show(string $id)
     {
-        $comment = Comment::with(['user', 'product'])->findOrFail($id);
+        $comment = Comment::with(['user', 'product', 'post'])->findOrFail($id);
         return new CommentResource($comment);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    /** Update the specified resource in storage.*/
     public function update(Request $request, string $id)
     {
         $comment = Comment::findOrFail($id);
@@ -57,17 +59,15 @@ class CommentController extends Controller
 
         $comment->update($validated);
 
-        return new CommentResource($comment->load(['user', 'product']));
+        return new CommentResource($comment->load(['user', 'product', 'post']));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    /*** Remove the specified resource from storage.*/
     public function destroy(string $id)
     {
         $comment = Comment::findOrFail($id);
         $comment->delete();
 
-        return response()->json(['message' => 'Comment deleted successfully'], 200);
+        return response()->noContent();
     }
 }

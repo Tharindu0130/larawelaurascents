@@ -39,27 +39,27 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
                                     <div class="flex-shrink-0 h-10 w-10">
-                                        <img class="h-10 w-10 rounded-full object-cover shadow-sm" src="{{ $product->image }}" alt="{{ $product->name }}">
+                                        <img class="h-10 w-10 rounded-full object-cover shadow-sm" src="{{ $product['image'] ?? 'https://via.placeholder.com/40' }}" alt="{{ $product['name'] ?? '' }}">
                                     </div>
                                     <div class="ml-4">
-                                        <div class="text-sm font-medium text-gray-900">{{ $product->name }}</div>
+                                        <div class="text-sm font-medium text-gray-900">{{ $product['name'] ?? 'Product' }}</div>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900 font-bold">Rs. {{ number_format($product->price, 2) }}</div>
+                                <div class="text-sm text-gray-900 font-bold">Rs. {{ number_format($product['price'] ?? 0, 2) }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $product->stock > 10 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                    {{ $product->stock }}
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ ($product['stock'] ?? 0) > 10 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                    {{ $product['stock'] ?? 0 }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
-                                {{ $product->description }}
+                                {{ $product['description'] ?? '' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button wire:click="edit({{ $product->id }})" class="text-indigo-600 hover:text-indigo-900 mr-3 transition duration-150 ease-in-out">Edit</button>
-                                <button wire:click="confirmDelete({{ $product->id }})" class="text-red-600 hover:text-red-900 transition duration-150 ease-in-out">Delete</button>
+                                <button wire:click="edit({{ $product['id'] }})" class="text-indigo-600 hover:text-indigo-900 mr-3 transition duration-150 ease-in-out">Edit</button>
+                                <button wire:click="confirmDelete({{ $product['id'] }})" class="text-red-600 hover:text-red-900 transition duration-150 ease-in-out">Delete</button>
                             </td>
                         </tr>
                     @empty

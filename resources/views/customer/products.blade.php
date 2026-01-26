@@ -19,8 +19,8 @@
 
                 {{-- Product Image --}}
                 <img
-                    src="{{ $product->image ?? 'https://via.placeholder.com/400x300' }}"
-                    alt="{{ $product->name }}"
+                    src="{{ $product['image'] ?? 'https://via.placeholder.com/400x300' }}"
+                    alt="{{ $product['name'] ?? 'Product' }}"
                     class="w-full h-60 object-cover"
                 >
 
@@ -31,23 +31,24 @@
                     </p>
 
                     <h3 class="text-lg font-semibold mb-2">
-                        {{ $product->name }}
+                        {{ $product['name'] ?? 'Product' }}
                     </h3>
 
                     <p class="text-gray-700 font-bold mb-4">
-                        Rs. {{ number_format($product->price, 2) }}
+                        Rs. {{ number_format($product['price'] ?? 0, 2) }}
                     </p>
 
-                    {{-- ✅ ADD TO CART FORM (NEW) --}}
-                    <form action="{{ route('cart.add', $product->id) }}" method="POST">
+                    <form action="{{ route('cart.add', $product['id']) }}" method="POST">
                         @csrf
+                        <input type="hidden" name="name" value="{{ $product['name'] ?? '' }}">
+                        <input type="hidden" name="price" value="{{ $product['price'] ?? 0 }}">
+                        <input type="hidden" name="image" value="{{ $product['image'] ?? '' }}">
                         <button
                             type="submit"
                             class="w-full bg-indigo-600 text-white py-2 rounded-full text-sm hover:bg-indigo-700 transition">
                             Add to Cart
                         </button>
                     </form>
-                    {{-- ✅ END ADD TO CART FORM --}}
 
                 </div>
             </div>

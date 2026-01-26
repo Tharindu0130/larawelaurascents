@@ -35,15 +35,20 @@ Route::get('/contact', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Authentication
+| Authentication (separate admin / user login per assignment)
 |--------------------------------------------------------------------------
 */
 
-// Login
+// User (customer) login
 Route::get('/login', [LoginController::class, 'showLoginForm'])
     ->name('login');
-
 Route::post('/login', [LoginController::class, 'login']);
+
+// Admin login (separate route & page, same UI)
+Route::get('/admin/login', [LoginController::class, 'showAdminLoginForm'])
+    ->name('admin.login.form');
+Route::post('/admin/login', [LoginController::class, 'loginAdmin'])
+    ->name('admin.login');
 
 // Logout
 Route::post('/logout', [LogoutController::class, 'logout'])
@@ -71,7 +76,7 @@ Route::post('/register', [RegisterController::class, 'store']);
 Route::get('/cart', [CartController::class, 'index'])
     ->name('cart.show');
 
-Route::post('/cart/add/{product}', [CartController::class, 'add'])
+Route::post('/cart/add/{productId}', [CartController::class, 'add'])
     ->name('cart.add');
 
 Route::post('/cart/remove/{productId}', [CartController::class, 'remove'])

@@ -11,6 +11,7 @@ class Comment extends Model
 
     protected $fillable = [
         'product_id',
+        'post_id',
         'user_id',
         'content',
         'rating',
@@ -22,6 +23,14 @@ class Comment extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    /**
+     * Get the post that owns the comment.
+     */
+    public function post()
+    {
+        return $this->belongsTo(Post::class);
     }
 
     /**

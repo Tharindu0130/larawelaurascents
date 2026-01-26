@@ -9,9 +9,7 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    /**Display a listing of the resource.*/
     public function index()
     {
         return ProductResource::collection(Product::with(['category', 'user', 'tags', 'comments'])->get());
@@ -36,21 +34,19 @@ class ProductController extends Controller
 
         $product = Product::create($validated);
 
-        return new ProductResource($product->load(['category', 'user', 'tags', 'comments']));
+        return (new ProductResource($product->load(['category', 'user', 'tags', 'comments'])))
+            ->response()
+            ->setStatusCode(201);
     }
 
-    /**
-     * Display the specified resource.
-     */
+    /** Display the specified resource.*/
     public function show(string $id)
     {
         $product = Product::with(['category', 'user', 'tags', 'comments'])->findOrFail($id);
         return new ProductResource($product);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    /** Update the specified resource in storage.*/
     public function update(Request $request, string $id)
     {
         $product = Product::findOrFail($id);
@@ -70,14 +66,12 @@ class ProductController extends Controller
         return new ProductResource($product->load(['category', 'user', 'tags', 'comments']));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    /**Remove the specified resource from storage.*/
     public function destroy(string $id)
     {
         $product = Product::findOrFail($id);
         $product->delete();
 
-        return response()->json(['message' => 'Product deleted successfully'], 200);
+        return response()->noContent();
     }
 }

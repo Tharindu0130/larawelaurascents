@@ -7,7 +7,7 @@
             <div class="text-center mb-8">
                 <h1 class="text-3xl font-bold">Welcome Back</h1>
                 <p class="text-gray-500 mt-1">
-                    Sign in to continue shopping
+                    Admin sign in
                 </p>
             </div>
 
@@ -15,7 +15,7 @@
             <x-validation-errors class="mb-4" />
 
             {{-- Login Form --}}
-            <form method="POST" action="{{ route('login') }}">
+            <form method="POST" action="{{ route('admin.login') }}">
                 @csrf
 
                 {{-- Email --}}
@@ -79,22 +79,12 @@
                     </div>
 
                     <div class="text-center text-sm text-gray-600">
-                        Don’t have an account?
+                        User account?
                         <a
-                            href="{{ route('register') }}"
+                            href="{{ route('login') }}"
                             class="text-indigo-600 hover:underline"
                         >
-                            Register
-                        </a>
-                    </div>
-
-                    <div class="text-center text-sm text-gray-600">
-                        Admin?
-                        <a
-                            href="{{ route('admin.login.form') }}"
-                            class="text-indigo-600 hover:underline"
-                        >
-                            Admin Login
+                            User Login
                         </a>
                     </div>
 

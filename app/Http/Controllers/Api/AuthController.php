@@ -25,11 +25,13 @@ class AuthController extends Controller
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
-        // 4. Create Token (This earns you the Security Marks!)
+        // 4. Create Token (Sanctum)
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        // Return plain-text token as requested
-        return response($token, 200)->header('Content-Type', 'text/plain');
+        return response()->json([
+            'token' => $token,
+            'token_type' => 'Bearer',
+        ], 200);
     }
 
     public function logout(Request $request)

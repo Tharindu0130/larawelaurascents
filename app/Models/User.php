@@ -41,8 +41,24 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the posts for the user (author).
+     */
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    /**
+     * Get the comments for the user.
+     */
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    /**
      * Get the orders for the user.
-     * 
+     *
      * Assignment benefit: Demonstrates hasMany relationship for customer order history
      */
     public function orders()

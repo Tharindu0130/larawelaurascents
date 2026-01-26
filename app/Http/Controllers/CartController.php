@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Product;
 
 class CartController extends Controller
 {
@@ -13,18 +12,25 @@ class CartController extends Controller
         return view('customer.cart', compact('cart'));
     }
 
-    public function add(Request $request, Product $product)
+    /** Add to cart using product data from request */
+    public function add(Request $request, $productId)
     {
+        $request->validate([
+            'name' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'image' => 'nullable|string',
+        ]);
+
         $cart = session()->get('cart', []);
 
-        if (isset($cart[$product->id])) {
-            $cart[$product->id]['quantity']++;
+        if (isset($cart[$productId])) {
+            $cart[$productId]['quantity']++;
         } else {
-            $cart[$product->id] = [
-                'name' => $product->name,
-                'price' => $product->price,
+            $cart[$productId] = [
+                'name' => $request->input('name'),
+                'price' => (float) $request->input('price'),
                 'quantity' => 1,
-                'image' => $product->image ?? null, // Include image if available
+                'image' => $request->input('image'),
             ];
         }
 
