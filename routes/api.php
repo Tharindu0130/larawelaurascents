@@ -8,12 +8,27 @@ use App\Http\Controllers\Api\TagController;
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\CartController;
+
+// ============================================
+// PUBLIC API ROUTES (No Authentication Required)
+// ============================================
 
 // API Login (returns JSON token) – no auth required
 Route::post('/login', [AuthController::class, 'login']);
 
-// Public read: products index (for customer products page, no DB access)
+// Public Products Listing (NO Sanctum auth required - accessible to everyone)
 Route::get('/products', [ProductController::class, 'index']);
+
+// Cart routes (require Sanctum Bearer token + web middleware for session support)
+Route::middleware(['auth:sanctum', 'web'])->group(function () {
+    Route::get('/cart', [CartController::class, 'index']);
+    Route::post('/cart/add', [CartController::class, 'add']);
+    Route::put('/cart/update/{productId}', [CartController::class, 'update']);
+    Route::delete('/cart/remove/{productId}', [CartController::class, 'remove']);
+    Route::delete('/cart/clear', [CartController::class, 'clear']);
+});
 
 // 📱 MOBILE API ROUTES (Dedicated for Flutter)
 Route::prefix('mobile')->group(function () {
@@ -37,9 +52,12 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::post('/logout', [AuthController::class, 'logout']);
 
+    // ASSIGNMENT: API Resources (RESTful CRUD)
     Route::apiResource('products', ProductController::class)->except(['index']);
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('tags', TagController::class);
     Route::apiResource('comments', CommentController::class);
     Route::apiResource('posts', PostController::class);
+    Route::apiResource('orders', OrderController::class);
+    Route::apiResource('users', \App\Http\Controllers\Api\UserController::class); // User management API
 });

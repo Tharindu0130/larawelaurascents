@@ -18,6 +18,11 @@ Route::get('/', function () {
     return view('customer.home');
 })->name('home');
 
+// Debug route (remove after testing)
+Route::get('/debug-session', function () {
+    return view('debug-session');
+})->middleware('auth');
+
 // Products (USES CONTROLLER – IMPORTANT)
 Route::get('/products', [ProductController::class, 'index'])
     ->name('products');
@@ -97,13 +102,27 @@ Route::get('/checkout', function () {
     return view('customer.checkout');
 })->name('checkout');
 
-// Place order (protected - requires authentication and customer role)
-Route::post('/checkout', [App\Http\Controllers\OrderController::class, 'placeOrder'])
-    ->middleware(['auth', 'role:customer'])
-    ->name('checkout.place');
+Route::get('/order-confirmation', function () {
+    return view('customer.order-confirmation');
+})->name('order.confirmation');
+
+Route::get('/test-api', function () {
+    return view('test-api');
+})->name('test.api');
+
+// Place order form submission is now handled via API
+// The actual order creation happens through the API endpoint
+
+/*
+|--------------------------------------------------------------------------
+| Protected Routes (Require Login)
+|--------------------------------------------------------------------------
+| Uses 'auth' middleware for session-based authentication (web routes)
+| Sanctum tokens stored in session allow Livewire/frontend to call APIs
+*/
 
 Route::middleware([
-    'auth:sanctum',
+    'auth',  // Session-based auth for web routes (NOT auth:sanctum)
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {

@@ -23,7 +23,7 @@
                     <x-label for="email" value="Email Address" />
                     <x-input
                         id="email"
-                        class="block mt-1 w-full rounded-xl"
+                        class="block mt-1 w-full rounded-xl border-gray-300 focus:border-amber-500 focus:ring-amber-500"
                         type="email"
                         name="email"
                         :value="old('email')"
@@ -37,7 +37,7 @@
                     <x-label for="password" value="Password" />
                     <x-input
                         id="password"
-                        class="block mt-1 w-full rounded-xl"
+                        class="block mt-1 w-full rounded-xl border-gray-300 focus:border-amber-500 focus:ring-amber-500"
                         type="password"
                         name="password"
                         required
@@ -50,7 +50,7 @@
                         <input
                             id="remember_me"
                             type="checkbox"
-                            class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                            class="rounded border-gray-300 text-amber-600 shadow-sm focus:ring-amber-500"
                             name="remember"
                         >
                         <span class="ms-2 text-sm text-gray-600">
@@ -64,7 +64,7 @@
 
                     <button
                         type="submit"
-                        class="w-full bg-indigo-600 text-white py-2 rounded-full hover:bg-indigo-700 transition"
+                        class="w-full bg-amber-600 text-white py-2 rounded-full hover:bg-amber-700 transition"
                     >
                         Login
                     </button>
@@ -72,7 +72,7 @@
                     <div class="text-center text-sm">
                         <a
                             href="{{ route('password.request') }}"
-                            class="text-indigo-600 hover:underline"
+                            class="text-amber-600 hover:text-amber-700 hover:underline transition-colors"
                         >
                             Forgot your password?
                         </a>
@@ -82,7 +82,7 @@
                         User account?
                         <a
                             href="{{ route('login') }}"
-                            class="text-indigo-600 hover:underline"
+                            class="text-amber-600 hover:text-amber-700 hover:underline transition-colors"
                         >
                             User Login
                         </a>

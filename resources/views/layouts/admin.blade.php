@@ -13,15 +13,15 @@
         <div class="container mx-auto px-6 py-4">
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-8">
-                    <a href="{{ route('admin.dashboard') }}" class="text-2xl font-bold text-gray-800 hover:text-indigo-600 transition">
+                    <a href="{{ route('admin.dashboard') }}" class="text-2xl font-bold text-gray-800 hover:text-amber-600 transition">
                         Aura Scents Admin
                     </a>
                     
                     <div class="hidden md:flex space-x-6">
-                        <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'text-indigo-600 font-semibold' : 'text-gray-600 hover:text-indigo-600' }}">Dashboard</a>
-                        <a href="{{ route('admin.products') }}" class="{{ request()->routeIs('admin.products') ? 'text-indigo-600 font-semibold' : 'text-gray-600 hover:text-indigo-600' }}">Products</a>
-                        <a href="{{ route('admin.customers') }}" class="{{ request()->routeIs('admin.customers') ? 'text-indigo-600 font-semibold' : 'text-gray-600 hover:text-indigo-600' }}">Customers</a>
-                        <a href="{{ route('admin.orders') }}" class="{{ request()->routeIs('admin.orders') ? 'text-indigo-600 font-semibold' : 'text-gray-600 hover:text-indigo-600' }}">Orders</a>
+                        <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'text-amber-600 font-semibold' : 'text-gray-600 hover:text-amber-600' }}">Dashboard</a>
+                        <a href="{{ route('admin.products') }}" class="{{ request()->routeIs('admin.products') ? 'text-amber-600 font-semibold' : 'text-gray-600 hover:text-amber-600' }}">Products</a>
+                        <a href="{{ route('admin.customers') }}" class="{{ request()->routeIs('admin.customers') ? 'text-amber-600 font-semibold' : 'text-gray-600 hover:text-amber-600' }}">Customers</a>
+                        <a href="{{ route('admin.orders') }}" class="{{ request()->routeIs('admin.orders') ? 'text-amber-600 font-semibold' : 'text-gray-600 hover:text-amber-600' }}">Orders</a>
                     </div>
                 </div>
 

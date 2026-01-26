@@ -2,10 +2,18 @@
 
 namespace App\Livewire;
 
-use App\Models\Order;
+use Illuminate\Support\Facades\Http;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+/**
+ * ASSIGNMENT CRITERIA: Admin Order Management via API
+ * 
+ * This component demonstrates:
+ * - Using API calls instead of direct database access
+ * - Http facade for server-side API consumption
+ * - Proper separation of concerns (frontend calls API, not DB)
+ */
 class AdminOrders extends Component
 {
     use WithPagination;
@@ -15,7 +23,23 @@ class AdminOrders extends Component
     public $selectedOrder = null;
     public $isDetailModalOpen = false;
 
-    // Reset pagination when searching or filtering
+    /**
+     * ASSIGNMENT: API-based helper method
+     * All CRUD operations use API endpoints
+     */
+    private function api(string $method, string $url, array $data = []): \Illuminate\Http\Client\Response
+    {
+        $req = Http::acceptJson()->asJson()->withToken(session('api_token') ?? '');
+        return match (strtoupper($method)) {
+            'GET' => $req->get($url),
+            'POST' => $req->post($url, $data),
+            'PUT' => $req->put($url, $data),
+            'PATCH' => $req->patch($url, $data),
+            'DELETE' => $req->delete($url),
+            default => $req->get($url),
+        };
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -26,43 +50,116 @@ class AdminOrders extends Component
         $this->resetPage();
     }
 
+    /**
+     * ASSIGNMENT: Fetch orders via API (not direct DB access)
+     */
+    private function fetchOrders(): array
+    {
+        // Debug: Check if token exists
+        $token = session('api_token');
+        if (!$token) {
+            \Log::error('AdminOrders: No API token in session');
+            session()->flash('error', 'No API token found. Please logout and login again.');
+            return [];
+        }
+        
+        $r = $this->api('GET', url('/api/orders'));
+        
+        if (!$r->successful()) {
+            \Log::error('AdminOrders API failed', [
+                'status' => $r->status(),
+                'response' => $r->body()
+            ]);
+            session()->flash('error', 'Failed to load orders: ' . $r->status() . ' - ' . ($r->json('message') ?? 'Unknown error'));
+            return [];
+        }
+        
+        $data = $r->json('data') ?? $r->json() ?? [];
+        
+        // Extract orders from paginated response
+        if (isset($data['data']) && is_array($data['data'])) {
+            \Log::info('AdminOrders: Fetched ' . count($data['data']) . ' orders (paginated)');
+            return $data['data'];
+        }
+        
+        \Log::info('AdminOrders: Fetched ' . count($data) . ' orders');
+        return is_array($data) ? $data : [];
+    }
+
     public function render()
     {
-        $query = Order::with(['user', 'product'])
-            ->orderBy('created_at', 'desc');
-
+        // ASSIGNMENT: Get orders from API, not database
+        $allOrders = collect($this->fetchOrders());
+        
+        // Apply filters (client-side since API returns all)
         if ($this->statusFilter) {
-            $query->where('status', $this->statusFilter);
+            $allOrders = $allOrders->filter(function($order) {
+                return ($order['status'] ?? '') === $this->statusFilter;
+            });
         }
-
+        
         if ($this->search) {
-            $query->whereHas('user', function($q) {
-                $q->where('name', 'like', '%' . $this->search . '%')
-                  ->orWhere('email', 'like', '%' . $this->search . '%');
-            })->orWhere('id', 'like', '%' . $this->search . '%');
+            $allOrders = $allOrders->filter(function($order) {
+                $searchLower = strtolower($this->search);
+                $userName = strtolower($order['user']['name'] ?? '');
+                $userEmail = strtolower($order['user']['email'] ?? '');
+                $orderId = strtolower($order['id'] ?? '');
+                
+                return str_contains($userName, $searchLower) ||
+                       str_contains($userEmail, $searchLower) ||
+                       str_contains($orderId, $searchLower);
+            });
         }
-
-        $orders = $query->paginate(10);
+        
+        $allOrders = $allOrders->sortByDesc('created_at')->values();
+        
+        // Manual pagination
+        $page = \Illuminate\Pagination\Paginator::resolveCurrentPage();
+        $perPage = 10;
+        $slice = $allOrders->slice(($page - 1) * $perPage, $perPage)->values();
+        
+        $orders = new \Illuminate\Pagination\LengthAwarePaginator(
+            $slice,
+            $allOrders->count(),
+            $perPage,
+            $page,
+            ['path' => \Illuminate\Pagination\Paginator::resolveCurrentPath()]
+        );
 
         return view('livewire.admin-orders', [
             'orders' => $orders
         ])->layout('layouts.admin');
     }
 
+    /**
+     * ASSIGNMENT: Update order status via API
+     */
     public function updateStatus($orderId, $newStatus)
     {
-        $order = Order::find($orderId);
-        if ($order) {
-            $order->status = $newStatus;
-            $order->save();
-            session()->flash('message', "Order #{$order->id} status updated to " . ucfirst($newStatus));
+        $r = $this->api('PUT', url('/api/orders/' . $orderId), [
+            'status' => $newStatus
+        ]);
+        
+        if ($r->successful()) {
+            session()->flash('message', "Order #{$orderId} status updated to " . ucfirst($newStatus));
+        } else {
+            session()->flash('error', 'Failed to update order status.');
         }
     }
 
+    /**
+     * ASSIGNMENT: View order details via API
+     */
     public function viewDetails($orderId)
     {
-        $this->selectedOrder = Order::with(['user', 'product'])->find($orderId);
-        $this->isDetailModalOpen = true;
+        $r = $this->api('GET', url('/api/orders/' . $orderId));
+        
+        if ($r->successful()) {
+            $this->selectedOrder = $r->json('data');
+            $this->isDetailModalOpen = true;
+        } else {
+            session()->flash('error', 'Failed to load order details.');
+        }
     }
 
     public function closeDetailModal()

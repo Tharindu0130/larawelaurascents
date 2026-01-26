@@ -45,34 +45,34 @@
                     @forelse($orders as $order)
                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-6 py-4 whitespace-nowrap font-mono text-sm">
-                                #{{ $order->id }}
+                                #{{ $order['id'] ?? 'N/A' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">{{ $order->user->name ?? 'Unknown' }}</div>
-                                <div class="text-sm text-gray-500">{{ $order->user->email ?? '' }}</div>
+                                <div class="text-sm font-medium text-gray-900">{{ $order['user']['name'] ?? 'Unknown' }}</div>
+                                <div class="text-sm text-gray-500">{{ $order['user']['email'] ?? '' }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ $order->product->name ?? 'Deleted Product' }}
+                                {{ $order['product']['name'] ?? 'Deleted Product' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap font-bold text-sm">
-                                Rs. {{ number_format($order->total_price, 2) }}
+                                Rs. {{ number_format($order['total_price'] ?? 0, 2) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ $order->created_at->format('M d, H:i') }}
+                                {{ isset($order['created_at']) ? \Carbon\Carbon::parse($order['created_at'])->format('M d, H:i') : 'N/A' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <select wire:change="updateStatus({{ $order->id }}, $event.target.value)" class="text-sm border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50
-                                    {{ $order->status === 'completed' ? 'text-green-700 bg-green-50' : 
-                                       ($order->status === 'pending' ? 'text-yellow-700 bg-yellow-50' : 
-                                       ($order->status === 'cancelled' ? 'text-red-700 bg-red-50' : 'text-blue-700 bg-blue-50')) }}">
-                                    <option value="pending" {{ $order->status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                    <option value="processing" {{ $order->status === 'processing' ? 'selected' : '' }}>Processing</option>
-                                    <option value="completed" {{ $order->status === 'completed' ? 'selected' : '' }}>Completed</option>
-                                    <option value="cancelled" {{ $order->status === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                <select wire:change="updateStatus({{ $order['id'] }}, $event.target.value)" class="text-sm border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50
+                                    {{ ($order['status'] ?? '') === 'completed' ? 'text-green-700 bg-green-50' : 
+                                       (($order['status'] ?? '') === 'pending' ? 'text-yellow-700 bg-yellow-50' : 
+                                       (($order['status'] ?? '') === 'cancelled' ? 'text-red-700 bg-red-50' : 'text-blue-700 bg-blue-50')) }}">
+                                    <option value="pending" {{ ($order['status'] ?? '') === 'pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="processing" {{ ($order['status'] ?? '') === 'processing' ? 'selected' : '' }}>Processing</option>
+                                    <option value="completed" {{ ($order['status'] ?? '') === 'completed' ? 'selected' : '' }}>Completed</option>
+                                    <option value="cancelled" {{ ($order['status'] ?? '') === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                                 </select>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button wire:click="viewDetails({{ $order->id }})" class="text-indigo-600 hover:text-indigo-900">Details</button>
+                                <button wire:click="viewDetails({{ $order['id'] }})" class="text-indigo-600 hover:text-indigo-900">Details</button>
                             </td>
                         </tr>
                     @empty
@@ -99,15 +99,15 @@
                     <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                         <div class="mb-4 text-center sm:text-left">
                             <h3 class="text-lg leading-6 font-bold text-gray-900" id="modal-title">
-                                Order #{{ $selectedOrder->id }} Details
+                                Order #{{ $selectedOrder['id'] ?? 'N/A' }} Details
                             </h3>
-                            <p class="text-sm text-gray-500">Placed on {{ $selectedOrder->created_at->format('F d, Y at h:i A') }}</p>
+                            <p class="text-sm text-gray-500">Placed on {{ isset($selectedOrder['created_at']) ? \Carbon\Carbon::parse($selectedOrder['created_at'])->format('F d, Y at h:i A') : 'N/A' }}</p>
                         </div>
 
                         <div class="border-t border-b border-gray-200 py-4 my-4">
                             <h4 class="font-semibold text-sm text-gray-700 mb-2">Customer Info</h4>
-                            <p class="text-sm"><span class="font-medium">Name:</span> {{ $selectedOrder->user->name }}</p>
-                            <p class="text-sm"><span class="font-medium">Email:</span> {{ $selectedOrder->user->email }}</p>
+                            <p class="text-sm"><span class="font-medium">Name:</span> {{ $selectedOrder['user']['name'] ?? 'Unknown' }}</p>
+                            <p class="text-sm"><span class="font-medium">Email:</span> {{ $selectedOrder['user']['email'] ?? 'N/A' }}</p>
                             <div class="mt-2 text-sm">
                                 <span class="font-medium">Shipping Address:</span><br>
                                 {{-- We would use the address if stored in order table, but simplified model was used --}}
@@ -118,13 +118,13 @@
                         <div class="mb-4">
                             <h4 class="font-semibold text-sm text-gray-700 mb-3">Product</h4>
                             <div class="flex items-center">
-                                @if($selectedOrder->product->image)
-                                    <img src="{{ $selectedOrder->product->image }}" class="h-16 w-16 rounded object-cover border">
+                                @if(isset($selectedOrder['product']['image']) && $selectedOrder['product']['image'])
+                                    <img src="{{ $selectedOrder['product']['image'] }}" class="h-16 w-16 rounded object-cover border">
                                 @endif
                                 <div class="ml-4">
-                                    <p class="font-bold text-gray-900">{{ $selectedOrder->product->name }}</p>
-                                    <p class="text-sm text-gray-500">Qty: {{ $selectedOrder->quantity }}</p>
-                                    <p class="text-sm font-bold text-indigo-600">Rs. {{ number_format($selectedOrder->total_price, 2) }}</p>
+                                    <p class="font-bold text-gray-900">{{ $selectedOrder['product']['name'] ?? 'Unknown Product' }}</p>
+                                    <p class="text-sm text-gray-500">Qty: {{ $selectedOrder['quantity'] ?? 0 }}</p>
+                                    <p class="text-sm font-bold text-indigo-600">Rs. {{ number_format($selectedOrder['total_price'] ?? 0, 2) }}</p>
                                 </div>
                             </div>
                         </div>

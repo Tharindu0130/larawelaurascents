@@ -40,33 +40,29 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
                                     <div class="flex-shrink-0 h-10 w-10">
-                                        @if($user->profile_photo_url)
-                                            <img class="h-10 w-10 rounded-full object-cover" src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}">
-                                        @else
-                                            <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500 font-bold uppercase">
-                                                {{ substr($user->name, 0, 2) }}
-                                            </div>
-                                        @endif
+                                        <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500 font-bold uppercase">
+                                            {{ substr($user['name'] ?? 'U', 0, 2) }}
+                                        </div>
                                     </div>
                                     <div class="ml-4">
-                                        <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
+                                        <div class="text-sm font-medium text-gray-900">{{ $user['name'] ?? 'N/A' }}</div>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ $user->email }}
+                                {{ $user['email'] ?? 'N/A' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ $user->created_at->format('M d, Y') }}
+                                {{ isset($user['created_at']) ? \Carbon\Carbon::parse($user['created_at'])->format('M d, Y') : 'N/A' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <button wire:click="toggleStatus({{ $user->id }})" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ ($user->is_active ?? true) ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }} hover:opacity-75 transition cursor-pointer" title="Click to toggle status">
-                                    {{ ($user->is_active ?? true) ? 'Active' : 'Disabled' }}
+                                <button wire:click="toggleStatus({{ $user['id'] }})" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ ($user['is_active'] ?? true) ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }} hover:opacity-75 transition cursor-pointer" title="Click to toggle status">
+                                    {{ ($user['is_active'] ?? true) ? 'Active' : 'Disabled' }}
                                 </button>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button wire:click="viewOrders({{ $user->id }})" class="text-indigo-600 hover:text-indigo-900 transition duration-150 ease-in-out mr-3">View History</button>
-                                <button wire:click="confirmDelete({{ $user->id }})" class="text-red-600 hover:text-red-900 transition duration-150 ease-in-out">Delete</button>
+                                <button wire:click="viewOrders({{ $user['id'] }})" class="text-indigo-600 hover:text-indigo-900 transition duration-150 ease-in-out mr-3">View History</button>
+                                <button wire:click="confirmDelete({{ $user['id'] }})" class="text-red-600 hover:text-red-900 transition duration-150 ease-in-out">Delete</button>
                             </td>
                         </tr>
                     @empty
@@ -92,11 +88,11 @@
                 <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
                     <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                         <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">
-                            Order History for {{ $selectedUser->name }}
+                            Order History for {{ $selectedUser['name'] ?? 'Customer' }}
                         </h3>
                         
                         <div class="overflow-y-auto max-h-96">
-                            @if($selectedUser->orders->count() > 0)
+                            @if(isset($selectedUser['orders']) && count($selectedUser['orders']) > 0)
                                 <table class="min-w-full divide-y divide-gray-200">
                                     <thead class="bg-gray-50">
                                         <tr>
@@ -108,17 +104,17 @@
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-gray-200">
-                                        @foreach($selectedUser->orders as $order)
+                                        @foreach($selectedUser['orders'] as $order)
                                             <tr>
-                                                <td class="px-4 py-2 text-sm text-gray-900">#{{ $order->id }}</td>
-                                                <td class="px-4 py-2 text-sm text-gray-900">{{ $order->product->name ?? 'Unknown Product' }}</td>
-                                                <td class="px-4 py-2 text-sm text-gray-900">Rs. {{ number_format($order->total_price, 2) }}</td>
-                                                <td class="px-4 py-2 text-sm text-gray-500">{{ $order->created_at->format('M d, Y') }}</td>
+                                                <td class="px-4 py-2 text-sm text-gray-900">#{{ $order['id'] ?? 'N/A' }}</td>
+                                                <td class="px-4 py-2 text-sm text-gray-900">{{ $order['product']['name'] ?? 'Unknown Product' }}</td>
+                                                <td class="px-4 py-2 text-sm text-gray-900">Rs. {{ number_format($order['total_price'] ?? 0, 2) }}</td>
+                                                <td class="px-4 py-2 text-sm text-gray-500">{{ isset($order['created_at']) ? \Carbon\Carbon::parse($order['created_at'])->format('M d, Y') : 'N/A' }}</td>
                                                 <td class="px-4 py-2 text-sm">
                                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                        {{ $order->status === 'completed' ? 'bg-green-100 text-green-800' : 
-                                                           ($order->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800') }}">
-                                                        {{ ucfirst($order->status) }}
+                                                        {{ ($order['status'] ?? '') === 'completed' ? 'bg-green-100 text-green-800' : 
+                                                           (($order['status'] ?? '') === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800') }}">
+                                                        {{ ucfirst($order['status'] ?? 'unknown') }}
                                                     </span>
                                                 </td>
                                             </tr>

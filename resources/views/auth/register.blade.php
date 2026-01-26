@@ -23,7 +23,7 @@
                     <x-label for="name" value="Full Name" />
                     <x-input
                         id="name"
-                        class="block mt-1 w-full rounded-xl"
+                        class="block mt-1 w-full rounded-xl border-gray-300 focus:border-amber-500 focus:ring-amber-500"
                         type="text"
                         name="name"
                         :value="old('name')"
@@ -37,7 +37,7 @@
                     <x-label for="email" value="Email Address" />
                     <x-input
                         id="email"
-                        class="block mt-1 w-full rounded-xl"
+                        class="block mt-1 w-full rounded-xl border-gray-300 focus:border-amber-500 focus:ring-amber-500"
                         type="email"
                         name="email"
                         :value="old('email')"
@@ -50,7 +50,7 @@
                     <x-label for="password" value="Password" />
                     <x-input
                         id="password"
-                        class="block mt-1 w-full rounded-xl"
+                        class="block mt-1 w-full rounded-xl border-gray-300 focus:border-amber-500 focus:ring-amber-500"
                         type="password"
                         name="password"
                         required
@@ -62,7 +62,7 @@
                     <x-label for="password_confirmation" value="Confirm Password" />
                     <x-input
                         id="password_confirmation"
-                        class="block mt-1 w-full rounded-xl"
+                        class="block mt-1 w-full rounded-xl border-gray-300 focus:border-amber-500 focus:ring-amber-500"
                         type="password"
                         name="password_confirmation"
                         required
@@ -74,7 +74,7 @@
 
                     <button
                         type="submit"
-                        class="w-full bg-indigo-600 text-white py-2 rounded-full hover:bg-indigo-700 transition"
+                        class="w-full bg-amber-600 text-white py-2 rounded-full hover:bg-amber-700 transition"
                     >
                         Register
                     </button>
@@ -83,7 +83,7 @@
                         Already have an account?
                         <a
                             href="{{ route('login') }}"
-                            class="text-indigo-600 hover:underline"
+                            class="text-amber-600 hover:text-amber-700 hover:underline transition-colors"
                         >
                             Login
                         </a>

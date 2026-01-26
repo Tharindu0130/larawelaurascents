@@ -4,7 +4,7 @@
 <div class="bg-gray-50 py-16 px-4 sm:px-6 lg:px-8">
     <div class="max-w-7xl mx-auto">
         <div class="text-center">
-            <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase">Contact Us</h2>
+            <h2 class="text-base text-amber-600 font-semibold tracking-wide uppercase">Contact Us</h2>
             <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Get in touch</p>
             <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
                 Have a question about our fragrances or your order? We'd love to hear from you.
@@ -41,23 +41,23 @@
                         <div>
                             <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
                             <div class="mt-1">
-                                <input type="text" name="name" id="name" autocomplete="name" class="py-3 px-4 block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md">
+                                <input type="text" name="name" id="name" autocomplete="name" class="py-3 px-4 block w-full shadow-sm focus:ring-amber-500 focus:border-amber-500 border-gray-300 rounded-md">
                             </div>
                         </div>
                         <div>
                             <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
                             <div class="mt-1">
-                                <input type="email" name="email" id="email" autocomplete="email" class="py-3 px-4 block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md">
+                                <input type="email" name="email" id="email" autocomplete="email" class="py-3 px-4 block w-full shadow-sm focus:ring-amber-500 focus:border-amber-500 border-gray-300 rounded-md">
                             </div>
                         </div>
                         <div>
                             <label for="message" class="block text-sm font-medium text-gray-700">Message</label>
                             <div class="mt-1">
-                                <textarea id="message" name="message" rows="4" class="py-3 px-4 block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border border-gray-300 rounded-md"></textarea>
+                                <textarea id="message" name="message" rows="4" class="py-3 px-4 block w-full shadow-sm focus:ring-amber-500 focus:border-amber-500 border border-gray-300 rounded-md"></textarea>
                             </div>
                         </div>
                         <div>
-                            <button type="button" class="w-full inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <button type="button" class="w-full inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">
                                 Send Message
                             </button>
                         </div>

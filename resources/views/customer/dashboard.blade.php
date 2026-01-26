@@ -17,8 +17,8 @@
                     <p class="text-gray-600 text-sm mb-1">Total Orders</p>
                     <p class="text-3xl font-bold">{{ Auth::user()->orders()->count() }}</p>
                 </div>
-                <div class="bg-indigo-100 p-3 rounded-full">
-                    <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-amber-100 p-3 rounded-full">
+                    <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                     </svg>
                 </div>
@@ -61,8 +61,8 @@
         <h2 class="text-xl font-semibold mb-4">Quick Actions</h2>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <a href="{{ route('products') }}" class="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50 transition">
-                <div class="bg-indigo-100 p-2 rounded-lg">
-                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-amber-100 p-2 rounded-lg">
+                    <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                     </svg>
                 </div>
@@ -102,7 +102,7 @@
     <div class="bg-white rounded-xl shadow p-6">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-semibold">Recent Orders</h2>
-            <a href="{{ route('orders.index') }}" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+            <a href="{{ route('orders.index') }}" class="text-amber-600 hover:text-amber-800 text-sm font-medium">
                 View All →
             </a>
         </div>
