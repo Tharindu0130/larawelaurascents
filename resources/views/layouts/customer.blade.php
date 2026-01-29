@@ -120,11 +120,6 @@
                                 Profile
                             </a>
                             
-                            {{-- Customer Orders Page --}}
-                            <a href="{{ route('orders.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                My Orders
-                            </a>
-                            
                             {{-- Dashboard (if customer) --}}
                             @if(Auth::user()->user_type === 'customer')
                                 <a href="{{ route('customer.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
@@ -232,9 +227,6 @@
                         
                         <a href="{{ route('profile.show') }}" class="block text-gray-800 text-2xl font-semibold hover:text-amber-600 py-4 transition-colors">
                             👤 Profile
-                        </a>
-                        <a href="{{ route('orders.index') }}" class="block text-gray-800 text-2xl font-semibold hover:text-amber-600 py-4 transition-colors">
-                            📦 My Orders
                         </a>
                         
                         @if(Auth::user()->user_type === 'customer')

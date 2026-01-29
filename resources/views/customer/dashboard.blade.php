@@ -59,7 +59,7 @@
     {{-- Quick Actions --}}
     <div class="bg-white rounded-xl shadow p-6 mb-8">
         <h2 class="text-xl font-semibold mb-4">Quick Actions</h2>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <a href="{{ route('products') }}" class="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50 transition">
                 <div class="bg-amber-100 p-2 rounded-lg">
                     <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,15 +78,6 @@
                 <span class="font-medium">View Cart</span>
             </a>
 
-            <a href="{{ route('orders.index') }}" class="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50 transition">
-                <div class="bg-green-100 p-2 rounded-lg">
-                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                    </svg>
-                </div>
-                <span class="font-medium">My Orders</span>
-            </a>
-
             <a href="{{ route('profile.show') }}" class="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50 transition">
                 <div class="bg-purple-100 p-2 rounded-lg">
                     <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,17 +89,14 @@
         </div>
     </div>
 
-    {{-- Recent Orders --}}
+    {{-- All Orders --}}
     <div class="bg-white rounded-xl shadow p-6">
         <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-semibold">Recent Orders</h2>
-            <a href="{{ route('orders.index') }}" class="text-amber-600 hover:text-amber-800 text-sm font-medium">
-                View All →
-            </a>
+            <h2 class="text-xl font-semibold">All Orders</h2>
         </div>
 
         @php
-            $recentOrders = Auth::user()->orders()->with('product')->latest()->take(5)->get();
+            $recentOrders = Auth::user()->orders()->with('product')->latest()->get();
         @endphp
 
         @if($recentOrders->count() > 0)

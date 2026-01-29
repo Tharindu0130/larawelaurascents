@@ -22,11 +22,15 @@ class RegisterController extends Controller
             'password' => 'required|min:6|confirmed',
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'user_type' => 'customer',
         ]);
+
+        // Auto-login the user after registration
+        auth()->login($user);
 
         return redirect()
             ->route('login')

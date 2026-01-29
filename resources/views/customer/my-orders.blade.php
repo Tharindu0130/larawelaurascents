@@ -66,12 +66,24 @@
         try {
             showLoading();
             
-            // Use global axios from bootstrap.js (already configured with Bearer token)
+            // Get the API token from the meta tag
+            const tokenMeta = document.querySelector('meta[name="api-token"]');
+            const token = tokenMeta ? tokenMeta.getAttribute('content') : null;
+            
+            if (!token) {
+                throw new Error('No API token found. Please log in again.');
+            }
+            
+            // Set the Authorization header with the Bearer token
             const response = await axios.get('/api/orders', {
                 params: {
                     page: page
                 },
-                withCredentials: true
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
             });
             
             const data = response.data;
@@ -83,8 +95,14 @@
             }
         } catch (error) {
             console.error('Error loading orders:', error);
+            console.error('Error response:', error.response);
+            
             if (error.response && error.response.status === 401) {
                 showError('Authentication required. Please log in again.');
+                // Redirect to login after a delay
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 2000);
             } else {
                 showError('Error loading orders: ' + error.message);
             }

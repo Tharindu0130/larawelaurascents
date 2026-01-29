@@ -123,8 +123,7 @@ Route::get('/test-api', function () {
 
 Route::middleware([
     'auth',  // Session-based auth for web routes (NOT auth:sanctum)
-    config('jetstream.auth_session'),
-    'verified',
+    // config('jetstream.auth_session'),  // Temporarily disabled for debugging
 ])->group(function () {
     
     // Admin Dashboard

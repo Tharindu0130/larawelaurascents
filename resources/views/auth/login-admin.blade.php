@@ -1,7 +1,15 @@
 <x-guest-layout>
-    <div class="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+    <div class="min-h-screen flex items-center justify-center relative overflow-hidden px-4">
 
-        <div class="max-w-md w-full bg-white rounded-2xl shadow-lg p-8">
+        {{-- Video Background --}}
+        <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover">
+            <source src="{{ asset('videos/login-bg.mp4') }}" type="video/mp4">
+        </video>
+        
+        {{-- Dark Overlay --}}
+        <div class="absolute inset-0 bg-black/40"></div>
+
+        <div class="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8 relative z-10">
 
             {{-- Logo / Title --}}
             <div class="text-center mb-8">

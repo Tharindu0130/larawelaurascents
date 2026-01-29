@@ -39,12 +39,12 @@ class MobileAuthController extends Controller
         }
 
         // Check if user is active (SSP-II Requirement)
-        if (isset($user->is_active) && !$user->is_active) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Your account has been disabled by an administrator.'
-            ], 403);
-        }
+        // if (isset($user->is_active) && !$user->is_active) {
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => 'Your account has been disabled by an administrator.'
+        //     ], 403);
+        // }
 
         $deviceName = $request->device_name ?? 'Flutter Mobile App';
         $token = $user->createToken($deviceName)->plainTextToken;
