@@ -14,6 +14,8 @@ class ProductResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $user = $this->whenLoaded('user');
+        
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -24,7 +26,8 @@ class ProductResource extends JsonResource
             'user_id' => $this->user_id,
             'category_id' => $this->category_id,
             'category' => new CategoryResource($this->whenLoaded('category')),
-            'author' => $this->whenLoaded('user'),
+            'user' => $user, // For mobile app compatibility
+            'author' => $user, // Keep for backward compatibility
             'tags' => TagResource::collection($this->whenLoaded('tags')),
             'comments' => CommentResource::collection($this->whenLoaded('comments')),
             'created_at' => $this->created_at,

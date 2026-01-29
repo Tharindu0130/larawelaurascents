@@ -34,7 +34,7 @@
 
 {{-- NAVBAR --}}
 <nav class="bg-white border-b border-gray-100 h-20 lg:h-16" x-data="{ mobileMenuOpen: false }">
-    <div class="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
+    <div class="w-full px-6 h-full flex justify-between items-center">
         
         {{-- Mobile: Hamburger Icon (Left) --}}
         <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden text-gray-800 hover:text-amber-600 focus:outline-none">
@@ -259,13 +259,13 @@
 </nav>
 
 {{-- PAGE CONTENT --}}
-<main class="max-w-7xl mx-auto px-6 py-10">
+<main class="w-full px-0 py-0">
     @yield('content')
 </main>
 
 {{-- FOOTER --}}
 <footer class="bg-gray-800 text-white mt-20">
-    <div class="max-w-7xl mx-auto px-6 py-8 text-center">
+    <div class="w-full px-6 py-8 text-center">
         <p>© {{ date('Y') }} Aura Scents. All rights reserved.</p>
     </div>
 </footer>

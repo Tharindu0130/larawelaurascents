@@ -67,7 +67,7 @@
 </section>
 
 <!-- BRAND STORY SECTION -->
-<section class="max-w-full mx-auto px-6 py-20 bg-gradient-to-r from-gray-50 to-gray-100 rounded-3xl my-16 animate-on-scroll opacity-0 -translate-y-10 transition-all duration-700">
+<section class="w-full px-6 py-20 bg-gradient-to-r from-gray-50 to-gray-100 my-0 animate-on-scroll opacity-0 -translate-y-10 transition-all duration-700">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         <div class="space-y-6">
             <h2 class="text-4xl font-serif font-bold text-gray-900">
@@ -100,7 +100,7 @@
 </section>
 
 <!-- FEATURED COLLECTION -->
-<section class="max-w-7xl mx-auto px-6 py-16">
+<section class="w-full px-6 py-16">
 
     <h2 class="text-3xl font-serif font-bold text-center mb-12 animate-on-scroll opacity-0 -translate-y-10 transition-all duration-700">
         Featured Collection
@@ -178,7 +178,7 @@
 </section>
 
 <!-- TESTIMONIALS SECTION -->
-<section class="max-w-7xl mx-auto px-6 py-20">
+<section class="w-full px-6 py-20">
     <h2 class="text-3xl font-serif font-bold text-center mb-16 animate-on-scroll opacity-0 -translate-y-10 transition-all duration-700">
         What Our Customers Say
     </h2>

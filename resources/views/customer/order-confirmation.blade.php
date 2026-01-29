@@ -45,9 +45,15 @@
     </div>
 
     <div id="actions" class="flex gap-4">
-        <a href="{{ route('orders.index') }}" class="flex-1 bg-black text-white text-center py-3 rounded-full hover:bg-gray-800">
-            View My Orders
-        </a>
+        @auth
+            <a href="{{ route('orders.index') }}" class="flex-1 bg-black text-white text-center py-3 rounded-full hover:bg-gray-800">
+                View My Orders
+            </a>
+        @else
+            <a href="{{ route('login') }}" class="flex-1 bg-black text-white text-center py-3 rounded-full hover:bg-gray-800">
+                Login to View Orders
+            </a>
+        @endauth
         <a href="{{ route('products') }}" class="flex-1 bg-gray-200 text-gray-800 text-center py-3 rounded-full hover:bg-gray-300">
             Continue Shopping
         </a>

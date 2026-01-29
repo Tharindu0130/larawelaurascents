@@ -2,7 +2,7 @@
 
 @section('content')
 
-<section class="max-w-7xl mx-auto px-6 py-12">
+<section class="w-full px-6 py-12">
     <div class="mb-8">
         <h1 class="text-3xl font-serif font-bold mb-2">Customer Dashboard</h1>
         <p class="text-gray-600">Welcome back, {{ Auth::user()->name }}!</p>

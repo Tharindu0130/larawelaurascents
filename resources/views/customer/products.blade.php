@@ -1,7 +1,7 @@
 @extends('layouts.customer')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-6 py-12">
+<div class="w-full px-6 py-12">
 
     <h1 class="text-3xl font-bold mb-8 text-center">
         Our Collection

@@ -2,7 +2,7 @@
 
 @section('content')
 
-<section class="max-w-6xl mx-auto px-6 py-12">
+<section class="w-full px-6 py-12">
     <div class="mb-8">
         <h1 class="text-3xl font-serif font-bold mb-2">My Orders</h1>
         <p class="text-gray-600">View and track your order history</p>
@@ -71,7 +71,9 @@
             const token = tokenMeta ? tokenMeta.getAttribute('content') : null;
             
             if (!token) {
-                throw new Error('No API token found. Please log in again.');
+                // Redirect to login if no token found
+                window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname);
+                return;
             }
             
             // Set the Authorization header with the Bearer token

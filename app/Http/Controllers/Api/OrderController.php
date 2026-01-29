@@ -21,31 +21,55 @@ class OrderController extends Controller
     {
         $user = $request->user();
 
-        // Check if user is admin to determine scope
-        $isAdmin = $user->user_type === 'admin';
+        \Log::info('📦 API: Fetching orders', [
+            'user_id' => $user->id,
+            'user_type' => $user->user_type
+        ]);
 
-        if ($isAdmin) {
-            // Admin sees all orders with optional filtering
-            $query = Order::with(['user', 'product']);
-            
-            // Optional status filter
-            if ($request->filled('status')) {
-                $query->where('status', $request->status);
+        try {
+            // Check if user is admin to determine scope
+            $isAdmin = $user->user_type === 'admin';
+
+            if ($isAdmin) {
+                // Admin sees all orders with optional filtering
+                $query = Order::with(['user', 'product']);
+                
+                // Optional status filter
+                if ($request->filled('status')) {
+                    $query->where('status', $request->status);
+                }
+
+                $orders = $query->latest()->get(); // Changed from paginate to get
+            } else {
+                // Regular user sees only their own orders
+                $orders = $user->orders()
+                    ->with('product')
+                    ->latest()
+                    ->get(); // Changed from paginate to get
             }
 
-            $orders = $query->latest()->paginate(10);
-        } else {
-            // Regular user sees only their own orders
-            $orders = $user->orders()
-                ->with('product')
-                ->latest()
-                ->paginate(10);
-        }
+            \Log::info('✅ API: Orders fetched successfully', [
+                'user_id' => $user->id,
+                'count' => $orders->count()
+            ]);
 
-        return response()->json([
-            'success' => true,
-            'data' => $orders
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Orders retrieved successfully',
+                'data' => $orders // Now returns a Collection (array-like), not a Paginator
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('❌ API: Failed to fetch orders', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch orders',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -53,26 +77,32 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate the request
-        $validated = $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'required|string|max:20',
-            'address' => 'required|string|max:500',
-            'city' => 'required|string|max:100',
-            'state' => 'required|string|max:100',
-            'zip' => 'required|string|max:20',
-            'payment_method' => 'required|string|in:credit_card,paypal,bank_transfer',
-            'cart_items' => 'required|array|min:1',
-            'cart_items.*.product_id' => 'required|exists:products,id',
-            'cart_items.*.quantity' => 'required|integer|min:1',
-        ]);
-
         $user = $request->user();
-        $cartItems = $validated['cart_items'];
-
+        
+        \Log::info('🛒 API: Creating order', [
+            'user_id' => $user->id,
+            'cart_items' => $request->cart_items
+        ]);
+        
         try {
+            // Validate the request
+            $validated = $request->validate([
+                'first_name' => 'required|string|max:255',
+                'last_name' => 'required|string|max:255',
+                'email' => 'required|email|max:255',
+                'phone' => 'required|string|max:20',
+                'address' => 'required|string|max:500',
+                'city' => 'required|string|max:100',
+                'state' => 'required|string|max:100',
+                'zip' => 'required|string|max:20',
+                'payment_method' => 'required|string|in:credit_card,paypal,bank_transfer',
+                'cart_items' => 'required|array|min:1',
+                'cart_items.*.product_id' => 'required|exists:products,id',
+                'cart_items.*.quantity' => 'required|integer|min:1',
+            ]);
+
+            $cartItems = $validated['cart_items'];
+
             DB::beginTransaction();
 
             $orders = [];
@@ -104,6 +134,12 @@ class OrderController extends Controller
 
             DB::commit();
 
+            \Log::info('✅ API: Order created successfully', [
+                'user_id' => $user->id,
+                'order_count' => count($orders),
+                'total_amount' => $totalAmount
+            ]);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Orders created successfully',
@@ -122,8 +158,19 @@ class OrderController extends Controller
                 ]
             ], 201);
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::warning('⚠️ API: Order validation failed', [
+                'user_id' => $user->id,
+                'errors' => $e->errors()
+            ]);
+            throw $e;
         } catch (\Exception $e) {
             DB::rollBack();
+
+            \Log::error('❌ API: Order creation failed', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage()
+            ]);
 
             return response()->json([
                 'success' => false,
@@ -138,20 +185,62 @@ class OrderController extends Controller
     public function show(string $id, Request $request)
     {
         $user = $request->user();
-        $order = Order::with(['user', 'product'])->findOrFail($id);
+        
+        \Log::info('🔍 API: Fetching order', [
+            'user_id' => $user->id,
+            'order_id' => $id
+        ]);
+        
+        try {
+            $order = Order::with(['user', 'product'])->findOrFail($id);
 
-        // Authorization: Admin can access any order, regular user can only access their own
-        if ($user->user_type !== 'admin' && $order->user_id !== $user->id) {
+            // Authorization: Admin can access any order, regular user can only access their own
+            if ($user->user_type !== 'admin' && $order->user_id !== $user->id) {
+                \Log::warning('⚠️ API: Unauthorized order access attempt', [
+                    'user_id' => $user->id,
+                    'order_id' => $id,
+                    'order_owner' => $order->user_id
+                ]);
+                
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized access to this order.'
+                ], 403);
+            }
+
+            \Log::info('✅ API: Order fetched successfully', [
+                'user_id' => $user->id,
+                'order_id' => $id
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Order retrieved successfully',
+                'data' => $order
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            \Log::warning('⚠️ API: Order not found', [
+                'user_id' => $user->id,
+                'order_id' => $id
+            ]);
+            
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized access to this order.'
-            ], 403);
+                'message' => 'Order not found'
+            ], 404);
+        } catch (\Exception $e) {
+            \Log::error('❌ API: Failed to fetch order', [
+                'user_id' => $user->id,
+                'order_id' => $id,
+                'error' => $e->getMessage()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch order',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        return response()->json([
-            'success' => true,
-            'data' => $order
-        ]);
     }
 
     /**

@@ -88,6 +88,24 @@ class User extends Authenticatable
     ];
 
     /**
+     * Override Jetstream's profile photo URL to return null instead of ui-avatars
+     * This prevents Flutter from trying to load invalid avatar URLs
+     * 
+     * ROOT CAUSE FIX: Jetstream generates ui-avatars.com URLs which return invalid image data
+     */
+    public function getProfilePhotoUrlAttribute(): ?string
+    {
+        // If user has uploaded a profile photo, return it
+        if ($this->profile_photo_path) {
+            return asset('storage/' . $this->profile_photo_path);
+        }
+        
+        // Return null instead of generating ui-avatars URL
+        // Let Flutter handle showing a default avatar icon
+        return null;
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

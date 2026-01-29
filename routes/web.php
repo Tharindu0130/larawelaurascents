@@ -110,6 +110,11 @@ Route::get('/test-api', function () {
     return view('test-api');
 })->name('test.api');
 
+// NEW: Unified API Demo Page (Web + Mobile using same API)
+Route::get('/api-demo', function () {
+    return view('api-demo');
+})->name('api.demo');
+
 // Place order form submission is now handled via API
 // The actual order creation happens through the API endpoint
 
