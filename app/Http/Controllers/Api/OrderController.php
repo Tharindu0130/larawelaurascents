@@ -72,9 +72,7 @@ class OrderController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    /*** Store a newly created resource in storage.*/
     public function store(Request $request)
     {
         $user = $request->user();
@@ -179,9 +177,7 @@ class OrderController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
+    /*** Display the specified resource.*/
     public function show(string $id, Request $request)
     {
         $user = $request->user();
@@ -274,9 +270,7 @@ class OrderController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    /*** Remove the specified resource from storage.*/
     public function destroy(string $id, Request $request)
     {
         $user = $request->user();

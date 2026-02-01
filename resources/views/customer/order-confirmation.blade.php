@@ -44,17 +44,8 @@
         </div>
     </div>
 
-    <div id="actions" class="flex gap-4">
-        @auth
-            <a href="{{ route('orders.index') }}" class="flex-1 bg-black text-white text-center py-3 rounded-full hover:bg-gray-800">
-                View My Orders
-            </a>
-        @else
-            <a href="{{ route('login') }}" class="flex-1 bg-black text-white text-center py-3 rounded-full hover:bg-gray-800">
-                Login to View Orders
-            </a>
-        @endauth
-        <a href="{{ route('products') }}" class="flex-1 bg-gray-200 text-gray-800 text-center py-3 rounded-full hover:bg-gray-300">
+    <div id="actions" class="flex justify-center">
+        <a href="{{ route('products') }}" class="w-full max-w-md bg-gray-200 text-gray-800 text-center py-3 rounded-full hover:bg-gray-300">
             Continue Shopping
         </a>
     </div>
@@ -84,7 +75,8 @@
                 // Display order information
                 displayOrderInfo(latestOrder);
             } else {
-                showError('No recent orders found.');
+                // Just hide loading without showing error
+                document.getElementById('loading').classList.add('hidden');
             }
         } catch (error) {
             console.error('Error loading order:', error);

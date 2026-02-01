@@ -4,10 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-/**
- * ASSIGNMENT CRITERIA: Complex Validation
- * Demonstrates validation for nested data (cart_items array)
- */
+
 class StoreOrderRequest extends FormRequest
 {
     public function authorize(): bool
@@ -15,15 +12,6 @@ class StoreOrderRequest extends FormRequest
         return $this->user() !== null;
     }
 
-    /**
-     * ASSIGNMENT CRITERIA: Security & Data Integrity
-     * 
-     * Security measures:
-     * - Email validation prevents injection
-     * - Array validation ensures structured data
-     * - Nested validation for cart items
-     * - Integer validation prevents type confusion attacks
-     */
     public function rules(): array
     {
         return [

@@ -6,10 +6,8 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    /**
-     * Display products page (products loaded via API in frontend JS).
-     * NO DIRECT DB ACCESS - follows assignment requirement.
-     */
+    //Display products page  
+    
     public function index()
     {
         return view('customer.products');

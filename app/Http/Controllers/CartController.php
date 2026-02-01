@@ -12,7 +12,7 @@ class CartController extends Controller
         return view('customer.cart', compact('cart'));
     }
 
-    /** Add to cart using product data from request */
+    //Add to cart using product data from request 
     public function add(Request $request, $productId)
     {
         $request->validate([

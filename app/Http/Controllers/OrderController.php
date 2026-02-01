@@ -10,23 +10,14 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
-    /**
-     * Show customer's order history.
-     * 
-     * This method now just loads the view, the actual data fetching
-     * will be done via API calls from the frontend
-     */
+    //Show customer's order history.
+
     public function myOrders()
     {
         return view('customer.my-orders');
     }
 
-    /**
-     * Show details of a specific order.
-     * 
-     * This method now just loads the view, the actual data fetching
-     * will be done via API calls from the frontend
-     */
+    //Show details of a specific order.
     public function show($id)
     {
         return view('customer.order-details', ['orderId' => $id]);

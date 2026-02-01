@@ -10,13 +10,13 @@ use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
-    /*** Show the user login form (customer)*/
+    //Show the user login form (customer)
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    /** Handle user (customer) login. Separate from admin login.*/
+    //Handle user (customer) login. Separate from admin login.
     public function login(Request $request)
     {
         $request->validate([
@@ -44,13 +44,13 @@ class LoginController extends Controller
         return redirect()->intended(route('home'));
     }
 
-    /*** Show the admin login form (separate route/page)*/
+    //Show the admin login form (separate route/page)
     public function showAdminLoginForm()
     {
         return view('auth.login-admin');
     }
 
-    /*** Handle admin login. Separate from user login.*/
+    //Handle admin login. Separate from user login.
     public function loginAdmin(Request $request)
     {
         $request->validate([
@@ -78,7 +78,7 @@ class LoginController extends Controller
         return redirect()->intended(route('admin.dashboard'));
     }
 
-    /*** Create Sanctum token and store in session for API calls (frontend CRUD via API).*/
+    //Create Sanctum token and store in session for API calls
     private function storeSanctumToken(User $user): void
     {
         $token = $user->createToken('web')->plainTextToken;

@@ -6,14 +6,7 @@ use Illuminate\Support\Facades\Http;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-/**
- * ASSIGNMENT CRITERIA: Admin Order Management via API
- * 
- * This component demonstrates:
- * - Using API calls instead of direct database access
- * - Http facade for server-side API consumption
- * - Proper separation of concerns (frontend calls API, not DB)
- */
+
 class AdminOrders extends Component
 {
     use WithPagination;
@@ -23,10 +16,7 @@ class AdminOrders extends Component
     public $selectedOrder = null;
     public $isDetailModalOpen = false;
 
-    /**
-     * ASSIGNMENT: API-based helper method
-     * All CRUD operations use API endpoints
-     */
+    
     private function api(string $method, string $url, array $data = []): \Illuminate\Http\Client\Response
     {
         $req = Http::acceptJson()->asJson()->withToken(session('api_token') ?? '');
@@ -51,7 +41,7 @@ class AdminOrders extends Component
     }
 
     /**
-     * ASSIGNMENT: Fetch orders via API (not direct DB access)
+     *  Fetch orders via API (not direct DB access)
      */
     private function fetchOrders(): array
     {
@@ -131,9 +121,8 @@ class AdminOrders extends Component
         ])->layout('layouts.admin');
     }
 
-    /**
-     * ASSIGNMENT: Update order status via API
-     */
+    // Update order status via API
+     
     public function updateStatus($orderId, $newStatus)
     {
         $r = $this->api('PUT', url('/api/orders/' . $orderId), [
@@ -147,9 +136,7 @@ class AdminOrders extends Component
         }
     }
 
-    /**
-     * ASSIGNMENT: View order details via API
-     */
+    // ASSIGNMENT: View order details via API
     public function viewDetails($orderId)
     {
         $r = $this->api('GET', url('/api/orders/' . $orderId));

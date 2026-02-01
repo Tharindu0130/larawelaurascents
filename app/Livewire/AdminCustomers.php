@@ -6,14 +6,7 @@ use Illuminate\Support\Facades\Http;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-/**
- * ASSIGNMENT CRITERIA: Admin Customer Management via API
- * 
- * This component demonstrates:
- * - Using API calls instead of direct database access
- * - Http facade for server-side API consumption
- * - Proper separation of concerns (frontend calls API, not DB)
- */
+
 class AdminCustomers extends Component
 {
     use WithPagination;
@@ -24,10 +17,6 @@ class AdminCustomers extends Component
     public $isDeleteModalOpen = false;
     public $userToDeleteId = null;
 
-    /**
-     * ASSIGNMENT: API-based helper method
-     * All CRUD operations use API endpoints
-     */
     private function api(string $method, string $url, array $data = []): \Illuminate\Http\Client\Response
     {
         $req = Http::acceptJson()->asJson()->withToken(session('api_token') ?? '');
@@ -46,9 +35,6 @@ class AdminCustomers extends Component
         $this->resetPage();
     }
 
-    /**
-     * ASSIGNMENT: Fetch customers via API (not direct DB access)
-     */
     private function fetchCustomers(): array
     {
         $url = url('/api/users');
@@ -83,7 +69,7 @@ class AdminCustomers extends Component
 
     public function render()
     {
-        // ASSIGNMENT: Get customers from API, not database
+        //  Get customers from API, not database
         $allUsers = collect($this->fetchCustomers());
         $allUsers = $allUsers->sortByDesc('created_at')->values();
         
@@ -106,7 +92,7 @@ class AdminCustomers extends Component
     }
 
     /**
-     * ASSIGNMENT: Toggle status via API
+     * Toggle status via API
      */
     public function toggleStatus($userId)
     {
@@ -133,7 +119,7 @@ class AdminCustomers extends Component
     }
 
     /**
-     * ASSIGNMENT: View orders via API
+     *  View orders via API
      */
     public function viewOrders($userId)
     {
@@ -165,7 +151,7 @@ class AdminCustomers extends Component
     }
 
     /**
-     * ASSIGNMENT: Delete user via API
+     *  Delete user via API
      */
     public function deleteUser()
     {

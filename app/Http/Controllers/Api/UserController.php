@@ -6,18 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-/**
- * ASSIGNMENT CRITERIA: User Management API
- * 
- * Provides API endpoints for managing users (customers)
- * Demonstrates: RESTful API for user CRUD operations
- */
+
 class UserController extends Controller
 {
-    /**
-     * Get all customers
-     * ASSIGNMENT: RESTful API endpoint for user listing
-     */
+  
     public function index(Request $request)
     {
         $query = User::where('user_type', 'customer');
@@ -39,9 +31,7 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Get a specific user
-     */
+   
     public function show(string $id)
     {
         $user = User::with(['orders.product'])->findOrFail($id);
@@ -52,9 +42,7 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Update user status
-     */
+    //Update user status
     public function update(Request $request, string $id)
     {
         $user = User::findOrFail($id);
@@ -74,9 +62,7 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Delete a user
-     */
+    // Delete a user
     public function destroy(string $id)
     {
         $user = User::findOrFail($id);
