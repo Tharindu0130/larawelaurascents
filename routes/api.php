@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\CartController;
+use App\Http\Controllers\Api\UserController;
 
 
 // PUBLIC API ROUTES (No Authentication Required)
@@ -54,5 +55,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('comments', CommentController::class);
     Route::apiResource('posts', PostController::class);
     Route::apiResource('orders', OrderController::class);
+    Route::apiResource('users', UserController::class);
 });
 

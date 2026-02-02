@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use Illuminate\Support\Facades\Http;
+use App\Models\Order;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -16,20 +16,6 @@ class AdminOrders extends Component
     public $selectedOrder = null;
     public $isDetailModalOpen = false;
 
-    
-    private function api(string $method, string $url, array $data = []): \Illuminate\Http\Client\Response
-    {
-        $req = Http::acceptJson()->asJson()->withToken(session('api_token') ?? '');
-        return match (strtoupper($method)) {
-            'GET' => $req->get($url),
-            'POST' => $req->post($url, $data),
-            'PUT' => $req->put($url, $data),
-            'PATCH' => $req->patch($url, $data),
-            'DELETE' => $req->delete($url),
-            default => $req->get($url),
-        };
-    }
-
     public function updatingSearch()
     {
         $this->resetPage();
@@ -40,112 +26,58 @@ class AdminOrders extends Component
         $this->resetPage();
     }
 
-    /**
-     *  Fetch orders via API (not direct DB access)
-     */
-    private function fetchOrders(): array
-    {
-        // Debug: Check if token exists
-        $token = session('api_token');
-        if (!$token) {
-            \Log::error('AdminOrders: No API token in session');
-            session()->flash('error', 'No API token found. Please logout and login again.');
-            return [];
-        }
-        
-        $r = $this->api('GET', url('/api/orders'));
-        
-        if (!$r->successful()) {
-            \Log::error('AdminOrders API failed', [
-                'status' => $r->status(),
-                'response' => $r->body()
-            ]);
-            session()->flash('error', 'Failed to load orders: ' . $r->status() . ' - ' . ($r->json('message') ?? 'Unknown error'));
-            return [];
-        }
-        
-        $data = $r->json('data') ?? $r->json() ?? [];
-        
-        // Extract orders from paginated response
-        if (isset($data['data']) && is_array($data['data'])) {
-            \Log::info('AdminOrders: Fetched ' . count($data['data']) . ' orders (paginated)');
-            return $data['data'];
-        }
-        
-        \Log::info('AdminOrders: Fetched ' . count($data) . ' orders');
-        return is_array($data) ? $data : [];
-    }
-
     public function render()
     {
-        // ASSIGNMENT: Get orders from API, not database
-        $allOrders = collect($this->fetchOrders());
+        // Query orders directly from database (no HTTP calls)
+        $query = Order::with(['user', 'product']);
         
-        // Apply filters (client-side since API returns all)
+        // Apply status filter
         if ($this->statusFilter) {
-            $allOrders = $allOrders->filter(function($order) {
-                return ($order['status'] ?? '') === $this->statusFilter;
-            });
+            $query->where('status', $this->statusFilter);
         }
         
+        // Apply search filter
         if ($this->search) {
-            $allOrders = $allOrders->filter(function($order) {
-                $searchLower = strtolower($this->search);
-                $userName = strtolower($order['user']['name'] ?? '');
-                $userEmail = strtolower($order['user']['email'] ?? '');
-                $orderId = strtolower($order['id'] ?? '');
-                
-                return str_contains($userName, $searchLower) ||
-                       str_contains($userEmail, $searchLower) ||
-                       str_contains($orderId, $searchLower);
+            $query->where(function($q) {
+                $q->where('id', 'like', '%' . $this->search . '%')
+                  ->orWhereHas('user', function($userQuery) {
+                      $userQuery->where('name', 'like', '%' . $this->search . '%')
+                               ->orWhere('email', 'like', '%' . $this->search . '%');
+                  });
             });
         }
         
-        $allOrders = $allOrders->sortByDesc('created_at')->values();
-        
-        // Manual pagination
-        $page = \Illuminate\Pagination\Paginator::resolveCurrentPage();
-        $perPage = 10;
-        $slice = $allOrders->slice(($page - 1) * $perPage, $perPage)->values();
-        
-        $orders = new \Illuminate\Pagination\LengthAwarePaginator(
-            $slice,
-            $allOrders->count(),
-            $perPage,
-            $page,
-            ['path' => \Illuminate\Pagination\Paginator::resolveCurrentPath()]
-        );
+        $orders = $query->orderBy('created_at', 'desc')->paginate(10);
 
         return view('livewire.admin-orders', [
             'orders' => $orders
         ])->layout('layouts.admin');
     }
 
-    // Update order status via API
-     
+    // Update order status directly in database
     public function updateStatus($orderId, $newStatus)
     {
-        $r = $this->api('PUT', url('/api/orders/' . $orderId), [
-            'status' => $newStatus
-        ]);
+        $order = Order::find($orderId);
         
-        if ($r->successful()) {
+        if ($order) {
+            $order->status = $newStatus;
+            $order->save();
             session()->flash('message', "Order #{$orderId} status updated to " . ucfirst($newStatus));
         } else {
-            session()->flash('error', 'Failed to update order status.');
+            session()->flash('error', 'Order not found.');
         }
     }
 
-    // ASSIGNMENT: View order details via API
+    // View order details directly from database
     public function viewDetails($orderId)
     {
-        $r = $this->api('GET', url('/api/orders/' . $orderId));
+        $order = Order::with(['user', 'product'])->find($orderId);
         
-        if ($r->successful()) {
-            $this->selectedOrder = $r->json('data');
+        if ($order) {
+            $this->selectedOrder = $order->toArray();
             $this->isDetailModalOpen = true;
         } else {
-            session()->flash('error', 'Failed to load order details.');
+            session()->flash('error', 'Order not found.');
         }
     }
 

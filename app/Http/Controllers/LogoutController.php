@@ -3,21 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
 class LogoutController extends Controller
 {
     public function logout(Request $request)
     {
-        // Get the token from session
-        $token = session('api_token');
-
-        if ($token) {
-            // Call API logout endpoint
-            Http::withHeaders([
-                'Authorization' => 'Bearer ' . $token,
-                'Accept' => 'application/json',
-            ])->post(url('/api/logout'));
+        // Revoke the current user's tokens directly (no HTTP call needed)
+        if (auth()->check()) {
+            auth()->user()->tokens()->delete();
         }
 
         // Clear the session token

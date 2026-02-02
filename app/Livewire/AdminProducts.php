@@ -2,9 +2,8 @@
 
 namespace App\Livewire;
 
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Http;
+use App\Models\Product;
+use App\Models\Category;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -23,7 +22,7 @@ class AdminProducts extends Component
     public $image;
     public $stock = 100;
 
-    /** @var int|null Default category for API create (first category). */
+    /** @var int|null Default category for create (first category). */
     public $defaultCategoryId = null;
 
     protected $rules = [
@@ -35,7 +34,9 @@ class AdminProducts extends Component
 
     public function mount(): void
     {
-        $this->fetchDefaultCategoryId();
+        // Get first category ID directly from database
+        $firstCategory = Category::first();
+        $this->defaultCategoryId = $firstCategory ? $firstCategory->id : null;
     }
 
     public function updatingSearch(): void
@@ -43,63 +44,19 @@ class AdminProducts extends Component
         $this->resetPage();
     }
 
-    private function api(string $method, string $url, array $data = []): \Illuminate\Http\Client\Response
-    {
-        $req = Http::acceptJson()->asJson()->withToken(session('api_token') ?? '');
-        return match (strtoupper($method)) {
-            'GET' => $req->get($url),
-            'POST' => $req->post($url, $data),
-            'PUT' => $req->put($url, $data),
-            'PATCH' => $req->patch($url, $data),
-            'DELETE' => $req->delete($url),
-            default => $req->get($url),
-        };
-    }
-
-    private function fetchDefaultCategoryId(): void
-    {
-        $r = $this->api('GET', url('/api/categories'));
-        if ($r->successful()) {
-            $data = $r->json('data') ?? $r->json();
-            $items = is_array($data) ? $data : [];
-            $first = !empty($items) ? reset($items) : [];
-            $this->defaultCategoryId = is_array($first) ? ($first['id'] ?? null) : null;
-        }
-    }
-
-    private function fetchProducts(): Collection
-    {
-        $r = Http::acceptJson()->get(url('/api/products'));
-        if (!$r->successful()) {
-            return collect();
-        }
-        $data = $r->json('data') ?? $r->json() ?? [];
-        return collect($data);
-    }
-
-    public function getProductsProperty(): LengthAwarePaginator
-    {
-        $all = $this->fetchProducts();
-        if ($this->search !== '') {
-            $all = $all->filter(fn ($p) => stripos($p['name'] ?? '', $this->search) !== false);
-        }
-        $all = $all->sortByDesc('id')->values();
-        $page = \Illuminate\Pagination\Paginator::resolveCurrentPage();
-        $perPage = 10;
-        $slice = $all->slice(($page - 1) * $perPage, $perPage)->values();
-        return new \Illuminate\Pagination\LengthAwarePaginator(
-            $slice,
-            $all->count(),
-            $perPage,
-            $page,
-            ['path' => \Illuminate\Pagination\Paginator::resolveCurrentPath()]
-        );
-    }
-
     public function render()
     {
+        // Query products directly from database (no HTTP calls)
+        $query = Product::with(['category', 'user']);
+        
+        if ($this->search !== '') {
+            $query->where('name', 'like', '%' . $this->search . '%');
+        }
+        
+        $products = $query->orderBy('id', 'desc')->paginate(10);
+
         return view('livewire.admin-products', [
-            'products' => $this->getProductsProperty(),
+            'products' => $products,
         ])->layout('layouts.admin');
     }
 
@@ -135,47 +92,54 @@ class AdminProducts extends Component
         $this->validate();
 
         if (!$this->defaultCategoryId) {
-            session()->flash('message', 'No category found. Create a category via API first.');
+            session()->flash('message', 'No category found. Create a category first.');
             return;
         }
 
-        $payload = [
+        $data = [
             'name' => $this->name,
             'description' => $this->description,
             'price' => (float) $this->price,
             'stock' => (int) $this->stock,
             'image' => $this->image,
             'category_id' => $this->defaultCategoryId,
+            'user_id' => auth()->id(),
         ];
 
         if ($this->product_id) {
-            $r = $this->api('PUT', url('/api/products/' . $this->product_id), $payload);
+            // Update existing product
+            $product = Product::find($this->product_id);
+            if ($product) {
+                $product->update($data);
+                session()->flash('message', 'Product updated successfully.');
+            } else {
+                session()->flash('message', 'Product not found.');
+            }
         } else {
-            $r = $this->api('POST', url('/api/products'), $payload);
+            // Create new product
+            Product::create($data);
+            session()->flash('message', 'Product created successfully.');
         }
 
-        if ($r->successful()) {
-            session()->flash('message', $this->product_id ? 'Product updated successfully.' : 'Product created successfully.');
-            $this->closeModal();
-        } else {
-            session()->flash('message', 'API error: ' . ($r->json('message') ?? $r->body()));
-        }
+        $this->closeModal();
     }
 
     public function edit($id): void
     {
-        $r = Http::acceptJson()->withToken(session('api_token') ?? '')->get(url('/api/products/' . $id));
-        if (!$r->successful()) {
-            session()->flash('message', 'Failed to load product.');
+        $product = Product::find($id);
+        
+        if (!$product) {
+            session()->flash('message', 'Product not found.');
             return;
         }
-        $product = $r->json('data') ?? $r->json();
-        $this->product_id = (int) $id;
-        $this->name = $product['name'] ?? '';
-        $this->description = $product['description'] ?? '';
-        $this->price = $product['price'] ?? '';
-        $this->image = $product['image'] ?? '';
-        $this->stock = (int) ($product['stock'] ?? 100);
+
+        $this->product_id = $product->id;
+        $this->name = $product->name;
+        $this->description = $product->description;
+        $this->price = $product->price;
+        $this->image = $product->image;
+        $this->stock = $product->stock;
+
         $this->openModal();
     }
 
@@ -193,12 +157,15 @@ class AdminProducts extends Component
 
     public function delete(): void
     {
-        $r = $this->api('DELETE', url('/api/products/' . $this->product_id));
-        if ($r->successful()) {
+        $product = Product::find($this->product_id);
+        
+        if ($product) {
+            $product->delete();
             session()->flash('message', 'Product deleted successfully.');
         } else {
-            session()->flash('message', 'Failed to delete product.');
+            session()->flash('message', 'Product not found.');
         }
+        
         $this->cancelDelete();
     }
 }

@@ -9,9 +9,20 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-  
+    /**
+     * Ensure only admins can access user management.
+     */
+    private function ensureAdmin(Request $request): void
+    {
+        if ($request->user()->user_type !== 'admin') {
+            abort(403, 'Unauthorized. Admin access required.');
+        }
+    }
+
     public function index(Request $request)
     {
+        $this->ensureAdmin($request);
+        
         $query = User::where('user_type', 'customer');
         
         // Search functionality
@@ -32,8 +43,10 @@ class UserController extends Controller
     }
 
    
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
+        $this->ensureAdmin($request);
+        
         $user = User::with(['orders.product'])->findOrFail($id);
         
         return response()->json([
@@ -45,6 +58,8 @@ class UserController extends Controller
     //Update user status
     public function update(Request $request, string $id)
     {
+        $this->ensureAdmin($request);
+        
         $user = User::findOrFail($id);
         
         $validated = $request->validate([
@@ -63,8 +78,10 @@ class UserController extends Controller
     }
 
     // Delete a user
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
+        $this->ensureAdmin($request);
+        
         $user = User::findOrFail($id);
         
         // Delete related orders first
