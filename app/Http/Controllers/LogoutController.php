@@ -8,15 +8,13 @@ class LogoutController extends Controller
 {
     public function logout(Request $request)
     {
-        // Revoke the current user's tokens directly (no HTTP call needed)
+        // Revoke current user tokens
         if (auth()->check()) {
             auth()->user()->tokens()->delete();
         }
-
-        // Clear the session token
+        // Clear session token
         session()->forget('api_token');
-
-        // Logout the user
+        // Logout user
         auth()->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

@@ -22,7 +22,7 @@ class AdminProducts extends Component
     public $image;
     public $stock = 100;
 
-    /** @var int|null Default category for create (first category). */
+    // Default category for create (first category)
     public $defaultCategoryId = null;
 
     protected $rules = [
@@ -34,7 +34,7 @@ class AdminProducts extends Component
 
     public function mount(): void
     {
-        // Get first category ID directly from database
+        // Get first category ID from database
         $firstCategory = Category::first();
         $this->defaultCategoryId = $firstCategory ? $firstCategory->id : null;
     }
@@ -46,7 +46,7 @@ class AdminProducts extends Component
 
     public function render()
     {
-        // Query products directly from database (no HTTP calls)
+        // Query products from database
         $query = Product::with(['category', 'user']);
         
         if ($this->search !== '') {

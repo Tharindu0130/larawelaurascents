@@ -24,7 +24,7 @@ class AdminCustomers extends Component
 
     public function render()
     {
-        // Query customers directly from database (no HTTP calls)
+        // Query customers from database
         $query = User::where('user_type', 'customer');
         
         if ($this->search) {
@@ -41,9 +41,7 @@ class AdminCustomers extends Component
         ])->layout('layouts.admin');
     }
 
-    /**
-     * Toggle status directly in database
-     */
+    // Toggle status in database
     public function toggleStatus($userId)
     {
         $user = User::find($userId);
@@ -59,9 +57,7 @@ class AdminCustomers extends Component
         session()->flash('message', 'Customer status updated successfully.');
     }
 
-    /**
-     *  View orders directly from database
-     */
+    // View orders from database
     public function viewOrders($userId)
     {
         $user = User::with(['orders.product'])->find($userId);
@@ -92,9 +88,7 @@ class AdminCustomers extends Component
         $this->userToDeleteId = null;
     }
 
-    /**
-     *  Delete user directly from database
-     */
+    // Delete user from database
     public function deleteUser()
     {
         if ($this->userToDeleteId) {
@@ -103,7 +97,6 @@ class AdminCustomers extends Component
             if ($user) {
                 // Delete related orders first
                 $user->orders()->delete();
-                
                 // Delete user
                 $user->delete();
                 

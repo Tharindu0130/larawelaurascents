@@ -9,9 +9,7 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    /**
-     * Ensure only admins can access user management.
-     */
+    // Ensure only admins can access user management
     private function ensureAdmin(Request $request): void
     {
         if ($request->user()->user_type !== 'admin') {
@@ -55,7 +53,7 @@ class UserController extends Controller
         ]);
     }
 
-    //Update user status
+    // Update user status
     public function update(Request $request, string $id)
     {
         $this->ensureAdmin($request);
@@ -83,10 +81,8 @@ class UserController extends Controller
         $this->ensureAdmin($request);
         
         $user = User::findOrFail($id);
-        
         // Delete related orders first
         $user->orders()->delete();
-        
         // Delete user
         $user->delete();
         

@@ -28,14 +28,12 @@ class AdminOrders extends Component
 
     public function render()
     {
-        // Query orders directly from database (no HTTP calls)
+        // Query orders from database
         $query = Order::with(['user', 'product']);
-        
         // Apply status filter
         if ($this->statusFilter) {
             $query->where('status', $this->statusFilter);
         }
-        
         // Apply search filter
         if ($this->search) {
             $query->where(function($q) {
@@ -54,7 +52,7 @@ class AdminOrders extends Component
         ])->layout('layouts.admin');
     }
 
-    // Update order status directly in database
+    // Update order status in database
     public function updateStatus($orderId, $newStatus)
     {
         $order = Order::find($orderId);
@@ -68,7 +66,7 @@ class AdminOrders extends Component
         }
     }
 
-    // View order details directly from database
+    // View order details from database
     public function viewDetails($orderId)
     {
         $order = Order::with(['user', 'product'])->find($orderId);
