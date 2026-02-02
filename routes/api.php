@@ -11,9 +11,9 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\CartController;
 
-// ============================================
+
 // PUBLIC API ROUTES (No Authentication Required)
-// ============================================
+
 
 // Health check endpoint for Flutter connectivity testing
 Route::get('/ping', function () {
@@ -38,9 +38,9 @@ Route::middleware(['auth:sanctum', 'web'])->group(function () {
     Route::delete('/cart/clear', [CartController::class, 'clear']);
 });
 
-// ============================================
+
 // PROTECTED WEB API ROUTES (Authentication Required)
-// ============================================
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
@@ -56,8 +56,3 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('orders', OrderController::class);
 });
 
-// ============================================
-// OLD MOBILE ROUTES - REMOVED (Using standard /api routes now)
-// ============================================
-// If you need mobile-specific routes in the future, 
-// first create the controllers, then add the routes here
